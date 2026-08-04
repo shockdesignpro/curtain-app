@@ -1,6 +1,6 @@
 {
-  "name": "Parda kalkulyatori",
-  "short_name": "Parda Kalk",
+  "name": "Lobar Parda",
+  "short_name": "Lobar Parda",
   "description": "Parda va karniz buyurtmalarini hisoblash, chek chiqarish va mijozlar tarixini yuritish uchun ilova",
   "start_url": "./index.html",
   "scope": "./",
