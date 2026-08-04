@@ -113,8 +113,11 @@ function renderTarix(){
     var oRooms=(o.rooms||[]).filter(function(r){return (r.pardalar||[]).length;});
     if(oRooms.length){
       detailHtml+='<div style="font-size:11px;font-weight:800;color:var(--teal-dark);margin:0 0 4px;">📐 O\'lchamlar</div>';
-      oRooms.forEach(function(r){
-        detailHtml+='<div style="font-size:11.5px;font-weight:700;color:var(--text);padding:4px 0 2px;">🚪 '+esc(r.nomi)+'</div>';
+      oRooms.forEach(function(r,ridx){
+        detailHtml+='<div style="display:flex;align-items:center;gap:6px;padding:4px 0 2px;">'
+          +'<span style="width:18px;height:18px;border-radius:5px;background:var(--teal);color:#fff;font-size:10px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">'+(ridx+1)+'</span>'
+          +'<span style="font-size:11.5px;font-weight:700;color:var(--text);">'+esc(r.nomi)+'</span>'
+        +'</div>';
         (r.pardalar||[]).forEach(function(p,idx){
           var boyi=(p.boyi!==''&&p.boyi!=null)?p.boyi:'—';
           var eni=(p.eni!==''&&p.eni!=null)?p.eni:'—';

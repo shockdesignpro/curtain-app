@@ -23,7 +23,7 @@ function buildReceiptHtml(data){
   function makeRoomsHtml(){
     var withPardalar=(data.rooms||[]).filter(function(r){return (r.pardalar||[]).length;});
     if(!withPardalar.length)return '';
-    var body=withPardalar.map(function(r){
+    var body=withPardalar.map(function(r,ridx){
       var pRows=r.pardalar.map(function(p,idx){
         var boyi=(p.boyi!==''&&p.boyi!=null)?p.boyi:'—';
         var eni=(p.eni!==''&&p.eni!=null)?p.eni:'—';
@@ -33,7 +33,10 @@ function buildReceiptHtml(data){
         +'</div>';
       }).join('');
       return '<div style="margin-bottom:6px;">'
-        +'<div style="font-size:12px;font-weight:800;color:var(--teal-dark);padding:4px 6px;">🚪 '+esc(r.nomi)+' — '+r.pardalar.length+' ta parda</div>'
+        +'<div style="display:flex;align-items:center;gap:6px;padding:4px 6px;">'
+          +'<span style="width:20px;height:20px;border-radius:6px;background:var(--teal);color:#fff;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">'+(ridx+1)+'</span>'
+          +'<span style="font-size:12px;font-weight:800;color:var(--teal-dark);">'+esc(r.nomi)+' — '+r.pardalar.length+' ta parda</span>'
+        +'</div>'
         +pRows
       +'</div>';
     }).join('');
