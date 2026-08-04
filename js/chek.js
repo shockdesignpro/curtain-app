@@ -1,0 +1,267 @@
+// ============================================================
+// CHEK.JS — hisob-faktura (chek) HTML qurish, JPG qilib yuklash,
+// taqvim eslatmasi (.ics) generatsiya qilish.
+// html2canvas endi CDN emas, js/vendor/html2canvas.min.js dan
+// LOKAL yuklanadi (2-qadam) — internet bo'lmasa ham JPG eksport ishlaydi.
+// ============================================================
+
+// Chek (hisob-faktura) HTML sini quradi. Ham joriy hisobni saqlashda (exportJPG),
+// ham Tarixdan eski buyurtmani qayta yuklab olishda (redownloadOrderJPG) ishlatiladi -
+// ikkalasida ham bir xil ko'rinish chiqishi uchun.
+function buildReceiptHtml(data){
+  function makeRows(rows){
+    if(!rows.length)return '<div style="font-size:11px;color:#999;padding:4px 6px;">Qatorlar yo\'q</div>';
+    return rows.map(function(row){
+      return '<div class="rcpt-row">'
+        +'<span class="rcpt-name">'+esc(row.name)+'</span>'
+        +'<span class="rcpt-price">'+fmtN(row.price)+'</span>'
+        +'<span class="rcpt-mq">×'+row.miqdor+'</span>'
+        +'<span class="rcpt-sum">'+fmtN(row.sum)+'</span>'
+        +'</div>';
+    }).join('');
+  }
+  function makeRoomsHtml(){
+    var withPardalar=(data.rooms||[]).filter(function(r){return (r.pardalar||[]).length;});
+    if(!withPardalar.length)return '';
+    var body=withPardalar.map(function(r){
+      var pRows=r.pardalar.map(function(p,idx){
+        var boyi=(p.boyi!==''&&p.boyi!=null)?p.boyi:'—';
+        var eni=(p.eni!==''&&p.eni!=null)?p.eni:'—';
+        return '<div class="rcpt-row" style="border-bottom:1px solid #eee;">'
+          +'<span class="rcpt-name">🪟 Deraza '+(idx+1)+' <span style="color:#999;">('+esc(p.karniz)+', '+esc(p.rang)+')</span></span>'
+          +'<span class="rcpt-sum">'+esc(boyi)+' × '+esc(eni)+' m</span>'
+        +'</div>';
+      }).join('');
+      return '<div style="margin-bottom:6px;">'
+        +'<div style="font-size:12px;font-weight:800;color:var(--teal-dark);padding:4px 6px;">🚪 '+esc(r.nomi)+' — '+r.pardalar.length+' ta parda</div>'
+        +pRows
+      +'</div>';
+    }).join('');
+    return '<div class="rcpt-section">'
+      +'<div class="rcpt-section-title">📐 O\'lchamlar</div>'
+      +body
+    +'</div>';
+  }
+  var rows=data.rows||{mahsulot:[],tikish:[],ustanovka:[]};
+  return '<div class="rcpt-header">'
+      +'<div class="rcpt-title">🧵 Parda kalkulyatori</div>'
+      +'<div class="rcpt-sub">Hisob-faktura · '+data.dateStr+'</div>'
+    +'</div>'
+    +'<div class="rcpt-client">'
+      +'<div><strong>Mijoz:</strong> '+esc(data.ism)+'</div>'
+      +'<div><strong>Manzil:</strong> '+esc(data.manzil)+'</div>'
+      +'<div><strong>Tel:</strong> '+esc(data.tel)+'</div>'
+    +'</div>'
+    +makeRoomsHtml()
+    +(rows.mahsulot.length?
+    '<div class="rcpt-section">'
+      +'<div class="rcpt-section-title">📦 Harajatlar</div>'
+      +makeRows(rows.mahsulot)
+      +'<div class="rcpt-subtotal"><span>Harajatlar jami:</span><span>'+fmt(data.mS)+'</span></div>'
+    +'</div>':'')
+    +(rows.tikish.length?
+    '<div class="rcpt-section">'
+      +'<div class="rcpt-section-title rcpt-section-title-amber">✂️ Tikish xizmati</div>'
+      +makeRows(rows.tikish)
+      +'<div class="rcpt-subtotal"><span>Tikish jami:</span><span>'+fmt(data.tS)+'</span></div>'
+    +'</div>':'')
+    +(rows.ustanovka.length?
+    '<div class="rcpt-section">'
+      +'<div class="rcpt-section-title rcpt-section-title-purple">🔧 O\'rnatish xizmati</div>'
+      +makeRows(rows.ustanovka)
+      +'<div class="rcpt-subtotal"><span>O\'rnatish jami:</span><span>'+fmt(data.uS)+'</span></div>'
+    +'</div>':'')
+    +'<div class="rcpt-totals">'
+      +'<div class="rcpt-tot-line"><span>📦 Harajatlar</span><span>'+fmt(data.mS)+'</span></div>'
+      +'<div class="rcpt-tot-div"></div>'
+      +'<div class="rcpt-tot-line"><span>✂️ Tikish</span><span>'+fmt(data.tS)+'</span></div>'
+      +'<div class="rcpt-tot-line"><span>🔧 O\'rnatish</span><span>'+fmt(data.uS)+'</span></div>'
+      +'<div class="rcpt-xizmat"><span>Xizmat haqi jami</span><span>'+fmt(data.xizmat)+'</span></div>'
+      +'<div class="rcpt-grand"><span>💰 JAMI</span><span>'+fmt(data.grand)+'</span></div>'
+    +'</div>'
+    +'<div class="rcpt-footer">"Lobar" pardalar uyi tomonidan hisoblab berildi</div>';
+}
+
+function downloadJpgFromReceipt(rcpt, ism, dateForName, onDone){
+  if(typeof html2canvas === 'undefined'){
+    showSnack("❌ JPG mexanizmi yuklanmagan. Sahifani qayta yuklab ko'ring.");
+    return;
+  }
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      html2canvas(rcpt, {
+        scale: 3,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false
+      }).then(function(canvas){
+        var link=document.createElement('a');
+        var safeIsm=(ism||'mijoz').replace(/\s+/g,'_').replace(/[^\w-]/g,'');
+        var fileName='hisob_'+dateForName.getFullYear()+(dateForName.getMonth()+1<10?'0':'')+(dateForName.getMonth()+1)+(dateForName.getDate()<10?'0':'')+dateForName.getDate()+'_'+(safeIsm||'mijoz')+'.jpg';
+        link.download=fileName;
+        link.href=canvas.toDataURL('image/jpeg',0.95);
+        link.click();
+        showSnack('✅ JPG saqlandi!');
+        if(onDone)onDone();
+      }).catch(function(err){
+        console.error('html2canvas xatosi:', err);
+        showSnack('❌ Xato yuz berdi');
+      });
+    });
+  });
+}
+
+function exportJPG(){
+  var ismVal=(document.getElementById('mijoz-ism').value||'').trim();
+  var manzilVal=(document.getElementById('mijoz-manzil').value||'').trim();
+  var telVal=(document.getElementById('mijoz-tel').value||'').trim();
+  var telDigits=normPhone(telVal);
+
+  if(!ismVal||!manzilVal||!telDigits||telDigits.length<12){
+    switchPage('mahsulotlar');
+    showSnack("⚠️ Mijoz ism, manzil va tel raqamini to'liq kiriting");
+    var firstBad=!ismVal?'mijoz-ism':(!manzilVal?'mijoz-manzil':'mijoz-tel');
+    var el=document.getElementById(firstBad);
+    if(el){el.focus();el.scrollIntoView({behavior:'smooth',block:'center'});}
+    return;
+  }
+  var mSCheck=getSum('mahsulot'),tSCheck=getSum('tikish'),uSCheck=getSum('ustanovka');
+  var hasRows=calcRows.mahsulot.length||calcRows.tikish.length||calcRows.ustanovka.length;
+  if(!hasRows||(mSCheck+tSCheck+uSCheck)<=0){
+    showSnack("⚠️ Hisobda hech qanday mahsulot yoki xizmat yo'q");
+    return;
+  }
+
+  var ism=ismVal||'—';
+  var manzil=manzilVal||'—';
+  var tel=telVal||'—';
+  var tayyorSana=document.getElementById('mijoz-tayyor-sana').value||'';
+  var mS=getSum('mahsulot'),tS=getSum('tikish'),uS=getSum('ustanovka');
+  var xizmat=tS+uS,grand=mS+xizmat;
+  var now=new Date();
+  var dateStr=now.getDate()+'/'+(now.getMonth()+1)+'/'+now.getFullYear()
+    +' '+now.getHours()+':'+(now.getMinutes()<10?'0':'')+now.getMinutes();
+
+  // Buyurtmani tarixga (telefon xotirasiga) saqlaymiz - mijozning tel raqami
+  // bo'yicha keyinchalik Tarix bo'limidan qidirib topish mumkin bo'ladi.
+  function snapshotRows(type){
+    return calcRows[type].map(function(row){
+      var prod=products.find(function(p){return p.id===row.prodId;});
+      var price=prod?prod.price:0;
+      if(prod)bumpUsage(prod.id);
+      return {name:prod?prod.name:'?',price:price,miqdor:row.miqdor,sum:row.miqdor*price};
+    });
+  }
+  function snapshotRooms(){
+    return rooms.filter(function(r){return (r.pardalar||[]).length;}).map(function(r){
+      return {
+        nomi: r.nomi,
+        pardalar: r.pardalar.map(function(p){
+          return {boyi:p.boyi, eni:p.eni, karniz:p.karniz, rang:p.rang};
+        })
+      };
+    });
+  }
+
+  var rcptData={
+    ism:ism, manzil:manzil, tel:tel, dateStr:dateStr,
+    rooms:snapshotRooms(),
+    rows:{mahsulot:snapshotRows('mahsulot'), tikish:snapshotRows('tikish'), ustanovka:snapshotRows('ustanovka')},
+    mS:mS, tS:tS, uS:uS, xizmat:xizmat, grand:grand
+  };
+
+  var rcpt=document.getElementById('receipt-area');
+  rcpt.innerHTML=buildReceiptHtml(rcptData);
+
+  orders.unshift({
+    id: now.getTime()+'_'+Math.random().toString(36).slice(2,7),
+    date: now.getTime(),
+    dateStr: dateStr,
+    ism: ism, manzil: manzil, tel: tel,
+    tayyorSana: tayyorSana,
+    rooms: rcptData.rooms,
+    rows: rcptData.rows,
+    andoza: andozaImages.map(function(a){return {src:a.src, caption:a.caption||''};}),
+    payments: [],
+    mS:mS, tS:tS, uS:uS, xizmat:xizmat, grand:grand
+  });
+  saveOrders();
+  saveUsage();
+  renderQuickAdd('mahsulot');renderQuickAdd('tikish');renderQuickAdd('ustanovka');
+
+  showSnack('📸 Rasm tayyorlanmoqda...');
+
+  downloadJpgFromReceipt(rcpt, ism, now, function(){
+    // Agar tayyor bo'lish sanasi tanlangan bo'lsa - kalendar eslatma faylini ham yuklaymiz.
+    if(tayyorSana){
+      setTimeout(function(){
+        downloadReminderIcs({ism:ism, tel:tel, sana:tayyorSana});
+        showSnack('📅 Eslatma fayli ham yuklandi — uni oching va taqvimga qo\'shing');
+      }, 700);
+    }
+  });
+}
+
+// Tarixdagi eski buyurtmani qayta JPG qilib yuklab olish ("Qayta saqlash")
+function redownloadOrderJPG(id){
+  var o=orders.find(function(x){return x.id===id;});
+  if(!o)return;
+  var rcpt=document.getElementById('receipt-area');
+  rcpt.innerHTML=buildReceiptHtml(o);
+  showSnack('📸 Rasm tayyorlanmoqda...');
+  downloadJpgFromReceipt(rcpt, o.ism, new Date(o.date));
+}
+
+// ---- KALENDAR ESLATMASI (.ics) ----
+// Standart .ics fayl - telefonning o'zining taqvim ilovasiga (Samsungda - Samsung
+// Calendar, iPhone'da - Apple Calendar) ochiladi va o'sha ilova eslatma yuboradi:
+// 1 kun oldin va tayyor bo'lish kuni ertalab soat 10:00 da.
+function pad2(n){return n<10?'0'+n:''+n;}
+function icsDateTime(y,mo,da,h,mi){return ''+y+pad2(mo)+pad2(da)+'T'+pad2(h)+pad2(mi)+'00';}
+function icsEscape(s){return String(s||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');}
+function downloadReminderIcs(info){
+  if(!info.sana)return;
+  var parts=info.sana.split('-');
+  var y=parseInt(parts[0],10), mo=parseInt(parts[1],10), da=parseInt(parts[2],10);
+  if(!y||!mo||!da)return;
+  var dtStart=icsDateTime(y,mo,da,10,0);
+  var dtEnd=icsDateTime(y,mo,da,10,30);
+  var now=new Date();
+  var stamp=icsDateTime(now.getFullYear(),now.getMonth()+1,now.getDate(),now.getHours(),now.getMinutes());
+  var uid='parda-'+now.getTime()+'@lobar';
+  var title='Buyurtma topshirish: '+(info.ism||'Mijoz');
+  var desc='Mijoz: '+(info.ism||'—')+'\nTelefon: '+(info.tel||'—')+'\nTayyor bo\'lish sanasi: '+info.sana;
+  var ics=[
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Parda Kalkulyatori//UZ',
+    'CALSCALE:GREGORIAN',
+    'BEGIN:VEVENT',
+    'UID:'+uid,
+    'DTSTAMP:'+stamp,
+    'DTSTART:'+dtStart,
+    'DTEND:'+dtEnd,
+    'SUMMARY:'+icsEscape(title),
+    'DESCRIPTION:'+icsEscape(desc),
+    'BEGIN:VALARM',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:'+icsEscape('Ertaga topshirish kuni: '+(info.ism||'Mijoz')+' ('+(info.tel||'')+')'),
+    'TRIGGER:-P1D',
+    'END:VALARM',
+    'BEGIN:VALARM',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:'+icsEscape('Bugun topshirish kuni: '+(info.ism||'Mijoz')+' ('+(info.tel||'')+')'),
+    'TRIGGER:PT0M',
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+  var blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var link=document.createElement('a');
+  var safeIsm=(info.ism||'mijoz').replace(/\s+/g,'_').replace(/[^\w-]/g,'');
+  link.download='eslatma_'+info.sana+'_'+safeIsm+'.ics';
+  link.href=url;
+  link.click();
+  setTimeout(function(){URL.revokeObjectURL(url);},4000);
+}
