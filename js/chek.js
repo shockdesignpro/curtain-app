@@ -28,7 +28,7 @@ function buildReceiptHtml(data){
         var boyi=(p.boyi!==''&&p.boyi!=null)?p.boyi:'—';
         var eni=(p.eni!==''&&p.eni!=null)?p.eni:'—';
         return '<div class="rcpt-row" style="border-bottom:1px solid #eee;">'
-          +'<span class="rcpt-name">🪟 Deraza '+(idx+1)+' <span style="color:#999;">('+esc(p.karniz)+', '+esc(p.rang)+')</span></span>'
+          +'<span class="rcpt-name">'+pardaLabel(r.pardalar,idx)+' <span style="color:#999;">('+esc(p.karniz)+', '+esc(p.rang)+')</span></span>'
           +'<span class="rcpt-sum">'+esc(boyi)+' × '+esc(eni)+' m</span>'
         +'</div>';
       }).join('');
@@ -157,7 +157,7 @@ function exportJPG(){
       return {
         nomi: r.nomi,
         pardalar: r.pardalar.map(function(p){
-          return {boyi:p.boyi, eni:p.eni, karniz:p.karniz, rang:p.rang};
+          return {tur:p.tur||'deraza', boyi:p.boyi, eni:p.eni, karniz:p.karniz, rang:p.rang};
         })
       };
     });

@@ -119,7 +119,7 @@ function renderTarix(){
           var boyi=(p.boyi!==''&&p.boyi!=null)?p.boyi:'—';
           var eni=(p.eni!==''&&p.eni!=null)?p.eni:'—';
           detailHtml+='<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:12px;border-bottom:1px solid var(--border);">'
-            +'<span style="flex:1;color:var(--text);">🪟 Deraza '+(idx+1)+' <span style="color:var(--muted);">('+esc(p.karniz)+', '+esc(p.rang)+')</span></span>'
+            +'<span style="flex:1;color:var(--text);">'+pardaLabel(r.pardalar,idx)+' <span style="color:var(--muted);">('+esc(p.karniz)+', '+esc(p.rang)+')</span></span>'
             +'<span style="color:var(--muted);white-space:nowrap;">'+esc(boyi)+' × '+esc(eni)+' m</span>'
           +'</div>';
         });

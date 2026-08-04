@@ -22,13 +22,30 @@ function onRoomField(id,field,val){
   if(r){r[field]=val;saveRooms();}
 }
 
-// Bitta xonada bir nechta deraza (parda) bo'lishi mumkin
-function addParda(roomId){
+// Bitta xonada bir nechta deraza va/yoki eshik (parda) bo'lishi mumkin.
+// Har biri o'z turi bo'yicha alohida raqamlanadi: Deraza 1, Deraza 2, Eshik 1, Deraza 3, Eshik 2...
+function addParda(roomId, tur){
+  tur = (tur==='eshik') ? 'eshik' : 'deraza';
   var r=rooms.find(function(x){return x.id===roomId;});
   if(!r)return;
   var id=++pardaCnt;
-  r.pardalar.push({id:id,boyi:'',eni:'',karniz:KARNIZ_TUR[0],rang:XONA_RANG[0]});
+  r.pardalar.push({id:id,tur:tur,boyi:'',eni:'',karniz:KARNIZ_TUR[0],rang:XONA_RANG[0]});
   saveRooms();renderRooms();
+}
+function pardaTypeName(tur){ return tur==='eshik' ? 'Eshik' : 'Deraza'; }
+function pardaTypeIcon(tur){ return tur==='eshik' ? '🚪' : '🪟'; }
+// pardalar ro'yxati va indeks bo'yicha "🪟 Deraza 2" yoki "🚪 Eshik 1" kabi
+// yorliq hisoblaydi — har bir tur o'zicha alohida sanaladi.
+// Eski (turi saqlanmagan) ma'lumotlar ham xato bermasligi uchun tur bo'lmasa 'deraza' deb olinadi.
+function pardaLabel(pardalar, idx){
+  var item=pardalar[idx];
+  var tur=(item&&item.tur)||'deraza';
+  var count=0;
+  for(var i=0;i<=idx;i++){
+    var t=(pardalar[i]&&pardalar[i].tur)||'deraza';
+    if(t===tur)count++;
+  }
+  return pardaTypeIcon(tur)+' '+pardaTypeName(tur)+' '+count;
 }
 function removeParda(roomId,pardaId){
   var r=rooms.find(function(x){return x.id===roomId;});
@@ -81,7 +98,7 @@ function renderRooms(){
       var rangOpts=XONA_RANG.map(function(c){return '<option value="'+c+'"'+(c===p.rang?' selected':'')+'>'+c+'</option>';}).join('');
       return '<div style="border-top:1px dashed var(--border);padding-top:9px;margin-top:9px;">'
         +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">'
-          +'<span style="font-size:11px;font-weight:800;color:var(--muted);">🪟 Deraza '+(pidx+1)+'</span>'
+          +'<span style="font-size:11px;font-weight:800;color:var(--muted);">'+pardaLabel(r.pardalar,pidx)+'</span>'
           +(r.pardalar.length>1?'<button class="del-btn" onclick="removeParda('+r.id+','+p.id+')">✕</button>':'')
         +'</div>'
         +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">'
@@ -101,7 +118,10 @@ function renderRooms(){
         +'<button class="del-btn" onclick="removeRoom('+r.id+')">✕</button>'
       +'</div>'
       +pardaHtml
-      +'<button class="add-row-btn arb-teal" style="margin-top:10px;padding:8px;font-size:12px;" onclick="addParda('+r.id+')">＋ Parda qo\'shish</button>'
+      +'<div style="display:flex;gap:8px;margin-top:10px;">'
+        +'<button class="add-row-btn arb-teal" style="margin:0;padding:8px;font-size:12px;flex:1;" onclick="addParda('+r.id+',\'deraza\')">🪟 Deraza qo\'shish</button>'
+        +'<button class="add-row-btn arb-teal" style="margin:0;padding:8px;font-size:12px;flex:1;" onclick="addParda('+r.id+',\'eshik\')">🚪 Eshik qo\'shish</button>'
+      +'</div>'
     +'</div>';
   }).join('');
 }
