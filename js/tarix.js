@@ -148,7 +148,7 @@ function renderTarix(){
           var src=(typeof a==='string')?a:a.src;
           var caption=(typeof a==='string')?'':(a.caption||'');
           return '<div style="width:56px;">'
-            +'<img src="'+src+'" style="width:56px;height:56px;object-fit:cover;border-radius:8px;border:1.5px solid var(--border);"/>'
+            +'<img src="'+src+'" onclick="event.stopPropagation();openImageViewer(\''+src+'\')" style="width:56px;height:56px;object-fit:cover;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;"/>'
             +(caption?'<div style="font-size:9.5px;color:var(--muted);text-align:center;margin-top:2px;word-break:break-word;">'+esc(caption)+'</div>':'')
           +'</div>';
         }).join('')

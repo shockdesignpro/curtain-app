@@ -42,6 +42,19 @@ function tozalaHisob(){
   showSnack('🗑️ Tozalandi');
 }
 
+// ---- ANDOZA RASM KO'RUVCHI (Tarix bo'limi uchun) ----
+function openImageViewer(src){
+  var ov=document.getElementById('img-viewer-ov');
+  var img=document.getElementById('img-viewer-img');
+  if(!ov||!img)return;
+  img.src=src;
+  ov.classList.add('open');
+}
+function closeImageViewer(){
+  var ov=document.getElementById('img-viewer-ov');
+  if(ov)ov.classList.remove('open');
+}
+
 // ---- INIT ----
 document.getElementById('add-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 

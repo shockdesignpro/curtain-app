@@ -85,6 +85,13 @@ function buildReceiptHtml(data){
     +'<div class="rcpt-footer">"Lobar" pardalar uyi tomonidan hisoblab berildi</div>';
 }
 
+// iPhone/iPad'ni aniqlash — Safari'da <a download> ishlamaydi (rasm Files'ga tushadi,
+// lekin Galereyaga (Photos) TUSHMAYDI). Shu sabab iOS'da alohida yo'l kerak.
+function isIOSDevice(){
+  return /iPad|iPhone|iPod/.test(navigator.userAgent)
+    || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+}
+
 function downloadJpgFromReceipt(rcpt, ism, dateForName, onDone){
   if(typeof html2canvas === 'undefined'){
     showSnack("❌ JPG mexanizmi yuklanmagan. Sahifani qayta yuklab ko'ring.");
@@ -98,20 +105,65 @@ function downloadJpgFromReceipt(rcpt, ism, dateForName, onDone){
         backgroundColor: '#ffffff',
         logging: false
       }).then(function(canvas){
-        var link=document.createElement('a');
         var safeIsm=(ism||'mijoz').replace(/\s+/g,'_').replace(/[^\w-]/g,'');
         var fileName='hisob_'+dateForName.getFullYear()+(dateForName.getMonth()+1<10?'0':'')+(dateForName.getMonth()+1)+(dateForName.getDate()<10?'0':'')+dateForName.getDate()+'_'+(safeIsm||'mijoz')+'.jpg';
-        link.download=fileName;
-        link.href=canvas.toDataURL('image/jpeg',0.95);
-        link.click();
-        showSnack('✅ JPG saqlandi!');
-        if(onDone)onDone();
+
+        if(isIOSDevice() && navigator.share){
+          // iOS: <a download> ishlamaydi - buning o'rniga tizimning "Ulashish" oynasini
+          // ochamiz, u yerda "Rasmni saqlash" tugmasi to'g'ridan-to'g'ri Galereyaga (Photos) tushiradi.
+          canvas.toBlob(function(blob){
+            if(!blob){ iosImageFallback(canvas); if(onDone)onDone(); return; }
+            var file=new File([blob], fileName, {type:'image/jpeg'});
+            if(navigator.canShare && navigator.canShare({files:[file]})){
+              navigator.share({files:[file], title: fileName}).then(function(){
+                showSnack('✅ Endi "Rasmni saqlash" ni tanlang');
+                if(onDone)onDone();
+              }).catch(function(err){
+                // Foydalanuvchi oynani yopib qo'ygan bo'lishi mumkin (bekor qildi) - xato emas
+                if(!(err && err.name==='AbortError')){
+                  iosImageFallback(canvas);
+                }
+                if(onDone)onDone();
+              });
+            } else {
+              iosImageFallback(canvas);
+              if(onDone)onDone();
+            }
+          }, 'image/jpeg', 0.95);
+        } else {
+          // Android / kompyuter - oddiy yuklab olish avvalgidek ishlayveradi
+          var link=document.createElement('a');
+          link.download=fileName;
+          link.href=canvas.toDataURL('image/jpeg',0.95);
+          link.click();
+          showSnack('✅ JPG saqlandi!');
+          if(onDone)onDone();
+        }
       }).catch(function(err){
         console.error('html2canvas xatosi:', err);
         showSnack('❌ Xato yuz berdi');
       });
     });
   });
+}
+
+// Agar Web Share API mavjud bo'lmasa (eski Safari) - rasmni yangi oynada to'liq ochamiz,
+// foydalanuvchi rasmni bosib turib "Rasmni saqlash" (Save Image) ni tanlab, Galereyaga qo'shadi.
+function iosImageFallback(canvas){
+  var dataUrl=canvas.toDataURL('image/jpeg',0.95);
+  var win=window.open();
+  if(win && win.document){
+    win.document.write(
+      '<html><head><meta name="viewport" content="width=device-width,initial-scale=1"/></head>'
+      +'<body style="margin:0;background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh;">'
+      +'<img src="'+dataUrl+'" style="max-width:100%;height:auto;display:block;"/>'
+      +'</body></html>'
+    );
+    win.document.close();
+    showSnack("📸 Rasmni bosib turing va \"Rasmni saqlash\"ni tanlang");
+  } else {
+    showSnack("⚠️ Rasmni ochib bo'lmadi (popup bloklangan bo'lishi mumkin)");
+  }
 }
 
 function exportJPG(){
