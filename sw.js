@@ -3,7 +3,7 @@
 // Versiyani o'zgartirsangiz (masalan v2, v3...), foydalanuvchilarga
 // yangi fayllar avtomatik yetkaziladi.
 // ============================================================
-var CACHE_NAME = 'parda-kalk-v2';
+var CACHE_NAME = 'parda-kalk-v3';
 var APP_SHELL = [
   './index.html',
   './manifest.json',
@@ -21,7 +21,9 @@ var APP_SHELL = [
   './js/backup.js',
   './js/main.js',
   './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icons/icon-512.png',
+  './icons/apple-touch-icon.png',
+  './icons/favicon-32.png'
 ];
 
 self.addEventListener('install', function(event){
