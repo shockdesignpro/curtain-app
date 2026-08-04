@@ -222,3 +222,12 @@ label{font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bot
 .rcpt-grand span:first-child{font-size:15px;font-weight:800;}
 .rcpt-grand span:last-child{font-size:20px;font-weight:800;}
 .rcpt-footer{text-align:center;font-size:10px;color:var(--muted);margin-top:12px;padding-top:8px;border-top:1px solid #eee;}
+
+/* ANDOZA RASM KO'RUVCHI (lightbox) - Tarix bo'limida rasmga bosilganda to'liq ekranda ochiladi */
+.img-viewer-ov{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;
+  align-items:center;justify-content:center;z-index:9999;padding:24px;box-sizing:border-box;
+  animation:imgViewerFade .15s ease;}
+.img-viewer-ov.open{display:flex;}
+.img-viewer-ov img{max-width:100%;max-height:100%;border-radius:10px;object-fit:contain;
+  box-shadow:0 8px 30px rgba(0,0,0,.5);}
+@keyframes imgViewerFade{from{opacity:0;}to{opacity:1;}}
