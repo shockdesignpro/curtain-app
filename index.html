@@ -7,14 +7,13 @@
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="Parda Kalk"/>
+<meta name="apple-mobile-web-app-title" content="Lobar Parda"/>
 <link rel="manifest" href="manifest.json"/>
-<link rel="apple-touch-icon" href="icons/icon-192.png"/>
-<title>Parda kalkulyatori</title>
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png"/>
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png"/>
+<title>Lobar Parda</title>
 <link rel="stylesheet" href="css/style.css"/>
 </head>
-<body>
-
 <body>
 
 <!-- TOPBAR -->
@@ -310,6 +309,11 @@
 <div id="receipt-area"></div>
 
 <div class="snack" id="snack"></div>
+
+<!-- ANDOZA RASM KO'RUVCHI (Tarix bo'limida rasmga bosilganda to'liq ekranda ochish uchun) -->
+<div class="img-viewer-ov" id="img-viewer-ov" onclick="closeImageViewer()">
+  <img id="img-viewer-img" src="" alt="Andoza"/>
+</div>
 
 <!-- html2canvas endi CDN emas, lokal fayldan yuklanadi (2-qadam: offline'da ham ishlashi uchun) -->
 <script src="js/vendor/html2canvas.min.js"></script>
