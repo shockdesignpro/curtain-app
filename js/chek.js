@@ -204,7 +204,9 @@ function exportJPG(){
       var prod=products.find(function(p){return p.id===row.prodId;});
       var price=prod?prod.price:0;
       if(prod)bumpUsage(prod.id);
-      return {name:prod?prod.name:'?',price:price,miqdor:row.miqdor,sum:row.miqdor*price};
+      // prodId ham saqlanadi - keyinchalik shu buyurtmani "O'zgartirish" orqali
+      // qayta ochganda, qatorlarni mahsulotlarga to'g'ri bog'lab qaytarish uchun.
+      return {name:prod?prod.name:'?',price:price,miqdor:row.miqdor,sum:row.miqdor*price,prodId:prod?prod.id:null};
     });
   }
   function snapshotRooms(){
@@ -228,23 +230,47 @@ function exportJPG(){
   var rcpt=document.getElementById('receipt-area');
   rcpt.innerHTML=buildReceiptHtml(rcptData);
 
-  orders.unshift({
-    id: now.getTime()+'_'+Math.random().toString(36).slice(2,7),
-    date: now.getTime(),
-    dateStr: dateStr,
-    ism: ism, manzil: manzil, tel: tel,
-    tayyorSana: tayyorSana,
-    rooms: rcptData.rooms,
-    rows: rcptData.rows,
-    andoza: andozaImages.map(function(a){return {src:a.src, caption:a.caption||''};}),
-    payments: [],
-    mS:mS, tS:tS, uS:uS, xizmat:xizmat, grand:grand
-  });
+  var andozaSnapshot=andozaImages.map(function(a){return {src:a.src, caption:a.caption||''};});
+  var wasEdit=false;
+
+  if(orderEditId){
+    // TAHRIRLASH REJIMI: yangi buyurtma qo'shmaymiz - mavjudini yangilaymiz,
+    // shu bilan dublikat bo'lib saqlanib qolishining oldi olinadi.
+    // id, yaratilgan sana (date/dateStr) va to'lovlar (payments), status - o'zgarmasdan saqlanadi.
+    var existing=orders.find(function(o){return o.id===orderEditId;});
+    if(existing){
+      existing.ism=ism; existing.manzil=manzil; existing.tel=tel; existing.tayyorSana=tayyorSana;
+      existing.rooms=rcptData.rooms; existing.rows=rcptData.rows; existing.andoza=andozaSnapshot;
+      existing.mS=mS; existing.tS=tS; existing.uS=uS; existing.xizmat=xizmat; existing.grand=grand;
+      existing.editedAt=now.getTime();
+      existing.editedDateStr=dateStr;
+      wasEdit=true;
+    }
+    orderEditId=null;
+    hideEditBanner();
+    renderSaqlash();
+  }
+  if(!wasEdit){
+    orders.unshift({
+      id: now.getTime()+'_'+Math.random().toString(36).slice(2,7),
+      date: now.getTime(),
+      dateStr: dateStr,
+      ism: ism, manzil: manzil, tel: tel,
+      tayyorSana: tayyorSana,
+      rooms: rcptData.rooms,
+      rows: rcptData.rows,
+      andoza: andozaSnapshot,
+      payments: [],
+      status: {},
+      tikuvchiIsmi: '',
+      mS:mS, tS:tS, uS:uS, xizmat:xizmat, grand:grand
+    });
+  }
   saveOrders();
   saveUsage();
   renderQuickAdd('mahsulot');renderQuickAdd('tikish');renderQuickAdd('ustanovka');
 
-  showSnack('📸 Rasm tayyorlanmoqda...');
+  showSnack(wasEdit ? '✅ Buyurtma yangilandi (dublikat bo\'lmadi), rasm tayyorlanmoqda...' : '📸 Rasm tayyorlanmoqda...');
 
   downloadJpgFromReceipt(rcpt, ism, now, function(){
     // Agar tayyor bo'lish sanasi tanlangan bo'lsa - kalendar eslatma faylini ham yuklaymiz.

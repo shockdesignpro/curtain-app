@@ -24,6 +24,27 @@ var rowCnt = 0;
 var roomCnt = 0;
 var pardaCnt = 0;
 
+// Tarixdagi buyurtmani "O'zgartirish" orqali tahrirlashda shu buyurtma id'si
+// shu yerga yoziladi. Saqlashda (exportJPG) agar shu qiymat bo'lsa, YANGI
+// buyurtma qo'shilmaydi - aksincha, shu id'li buyurtma yangilanadi (dublikat bo'lmasligi uchun).
+var orderEditId = null;
+
+// ---- BUYURTMA STATUSI (ishlab chiqarish bosqichlari) ----
+// Har bir buyurtmada shu bosqichlar galochka (checkbox) sifatida belgilanadi.
+// "tikuvchi" bosqichida qo'shimcha ism maydoni ham bor.
+var ORDER_STEPS = [
+  {key:'razmer',            label:"Razmer olindi"},
+  {key:'sotib_olindi',      label:"Sotib olindi"},
+  {key:'tikuvchiga_berildi',label:"Tikuvchiga berildi", hasName:true},
+  {key:'bichildi',          label:"Bichildi"},
+  {key:'chetlari_tikildi',  label:"Chetlari tikildi"},
+  {key:'boy_chiqarildi',    label:"Bo'y chiqarildi"},
+  {key:'tepasi_tikildi',    label:"Tepasi tikildi"},
+  {key:'dazmolandi',        label:"Dazmolandi"},
+  {key:'karniz_ustanovka',  label:"Karniz ustanovka"},
+  {key:'parda_ornatish',    label:"Pardani o'rnatish"}
+];
+
 ['mahsulot','tikish','ustanovka'].forEach(function(t){
   (calcRows[t]||[]).forEach(function(r){ if(r.id>rowCnt) rowCnt=r.id; });
 });

@@ -45,6 +45,54 @@ function orderStatus(o){
   if(paid>0)return 'partial';
   return 'none';
 }
+
+// ---- ZAKAZ STATUSI (ishlab chiqarish bosqichlari) ----
+function orderStepsDone(o){
+  var st=o.status||{};
+  return ORDER_STEPS.filter(function(s){return !!st[s.key];}).length;
+}
+function toggleOrderStep(orderId,stepKey){
+  var o=orders.find(function(x){return x.id===orderId;});
+  if(!o)return;
+  if(!o.status)o.status={};
+  o.status[stepKey]=!o.status[stepKey];
+  saveOrders();
+  renderTarix();
+}
+function setTikuvchiIsm(orderId,val){
+  var o=orders.find(function(x){return x.id===orderId;});
+  if(!o)return;
+  o.tikuvchiIsmi=val;
+  saveOrders();
+}
+function buildStepsHtml(o){
+  var st=o.status||{};
+  var rows=ORDER_STEPS.map(function(s){
+    var checked=!!st[s.key];
+    var nameField='';
+    if(s.hasName && checked){
+      nameField='<input type="text" placeholder="Tikuvchi ismi" value="'+esc(o.tikuvchiIsmi||'')+'" '
+        +'onclick="event.stopPropagation();" onchange="setTikuvchiIsm(\''+o.id+'\',this.value)" '
+        +'style="margin-left:28px;margin-top:4px;padding:6px 9px;font-size:11.5px;border:1.5px solid var(--border);border-radius:7px;font-family:var(--font);box-sizing:border-box;width:calc(100% - 28px);"/>';
+    }
+    return '<div style="padding:3px 0;">'
+      +'<div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="event.stopPropagation();toggleOrderStep(\''+o.id+'\',\''+s.key+'\')">'
+        +'<span style="width:18px;height:18px;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;'
+          +(checked?'background:var(--teal);color:#fff;':'background:#fff;border:1.5px solid var(--border);')+'">'+(checked?'✓':'')+'</span>'
+        +'<span style="font-size:12.5px;'+(checked?'color:var(--text);font-weight:700;':'color:var(--muted);')+'">'+esc(s.label)+'</span>'
+      +'</div>'
+      +nameField
+    +'</div>';
+  }).join('');
+  var done=orderStepsDone(o);
+  return '<div style="margin-top:8px;padding:10px;border-radius:10px;background:var(--bg);border:1.5px solid var(--border);">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">'
+      +'<span style="font-size:12px;font-weight:800;color:var(--teal-dark);">🧾 Zakaz statusi</span>'
+      +'<span style="font-size:11px;color:var(--muted);font-weight:700;">'+done+'/'+ORDER_STEPS.length+'</span>'
+    +'</div>'
+    +rows
+  +'</div>';
+}
 function addPayment(id){
   var input=document.getElementById('pay-input-'+id);
   if(!input)return;
@@ -189,6 +237,9 @@ function renderTarix(){
       :'')
     +'</div>';
 
+    var stepsDone=orderStepsDone(o);
+    var stepsBadge='<span style="font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px;color:var(--purple);background:var(--purple-light);white-space:nowrap;">🧾 '+stepsDone+'/'+ORDER_STEPS.length+'</span>';
+
     return '<div class="card" style="margin-bottom:10px;">'
       +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;cursor:pointer;" onclick="toggleTarixDetail(\''+o.id+'\')">'
         +'<div style="min-width:0;flex:1;">'
@@ -196,20 +247,22 @@ function renderTarix(){
           +'<div style="font-size:11px;color:var(--muted);margin-top:3px;">📞 '+esc(o.tel)+'</div>'
           +'<div style="font-size:11px;color:var(--muted);margin-top:1px;">📅 '+esc(o.dateStr)+'</div>'
           +tayyorLine
-          +'<div style="margin-top:5px;">'+payBadge+'</div>'
+          +'<div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap;">'+payBadge+stepsBadge+'</div>'
         +'</div>'
         +'<div style="text-align:right;flex-shrink:0;">'
           +'<div style="font-size:15px;font-weight:800;color:var(--teal);">'+fmt(o.grand)+'</div>'
           +'<div style="font-size:16px;color:var(--muted);margin-top:2px;">'+(isOpen?'▴':'▾')+'</div>'
         +'</div>'
       +'</div>'
-      +'<div style="display:'+(isOpen?'block':'none')+';margin-top:8px;border-top:1px solid var(--border);padding-top:6px;">'
+      +'<div style="display:flex;justify-content:flex-end;gap:6px;margin-top:8px;border-top:1px solid var(--border);padding-top:8px;">'
+        +'<button class="btn-icon" style="color:var(--amber);font-size:12px;font-weight:700;" onclick="event.stopPropagation();loadOrderForEdit(\''+o.id+'\')">✏️ O\'zgartirish</button>'
+        +'<button class="btn-icon" style="color:var(--teal);font-size:12px;font-weight:700;" onclick="event.stopPropagation();redownloadOrderJPG(\''+o.id+'\')">📸 Qayta saqlash</button>'
+        +'<button class="btn-icon" style="color:var(--red);font-size:12px;font-weight:700;" onclick="event.stopPropagation();deleteTarixItem(\''+o.id+'\')">🗑️ O\'chirish</button>'
+      +'</div>'
+      +'<div style="display:'+(isOpen?'block':'none')+';margin-top:2px;">'
         +detailHtml
+        +buildStepsHtml(o)
         +paySection
-        +'<div style="display:flex;justify-content:flex-end;gap:6px;margin-top:8px;">'
-          +'<button class="btn-icon" style="color:var(--teal);font-size:12px;font-weight:700;" onclick="event.stopPropagation();redownloadOrderJPG(\''+o.id+'\')">📸 Qayta saqlash</button>'
-          +'<button class="btn-icon" style="color:var(--red);font-size:12px;font-weight:700;" onclick="event.stopPropagation();deleteTarixItem(\''+o.id+'\')">🗑️ O\'chirish</button>'
-        +'</div>'
       +'</div>'
     +'</div>';
   }).join('');
@@ -221,6 +274,87 @@ function toggleTarixDetail(id){
   tarixOpenId=(tarixOpenId===id)?null:id;
   renderTarix();
 }
+// ---- BUYURTMANI TAHRIRLASH ("O'zgartirish") ----
+// Tarixdagi eski buyurtmani joriy formalarga (mijoz/xona/andoza/hisob) qaytarib
+// yuklaydi. Foydalanuvchi o'zgartirib, "Saqlash" bosganda YANGI buyurtma
+// qo'shilmaydi - shu buyurtmaning o'zi yangilanadi (chek.js dagi orderEditId tekshiruvi).
+function loadOrderForEdit(id){
+  var o=orders.find(function(x){return x.id===id;});
+  if(!o)return;
+
+  // Mijoz
+  document.getElementById('mijoz-ism').value=o.ism||'';
+  document.getElementById('mijoz-manzil').value=o.manzil||'';
+  document.getElementById('mijoz-tel').value=o.tel||'+998';
+  document.getElementById('mijoz-tayyor-sana').value=o.tayyorSana||'';
+  saveClient();
+
+  // Xonalar - yangi ID'lar bilan (eski ID'lar bilan to'qnashmasligi uchun)
+  rooms=(o.rooms||[]).map(function(r){
+    return {
+      id:++roomCnt,
+      nomi:r.nomi,
+      pardalar:(r.pardalar||[]).map(function(p){
+        return {id:++pardaCnt, tur:p.tur||'deraza', boyi:p.boyi||'', eni:p.eni||'', karniz:p.karniz||'Truba', rang:p.rang||'Oq'};
+      })
+    };
+  });
+  saveRooms();
+
+  // Andozalar
+  andozaImages=(o.andoza||[]).map(function(a){
+    return (typeof a==='string')?{src:a,caption:''}:{src:a.src,caption:a.caption||''};
+  });
+  saveAndoza();
+
+  // Hisob qatorlari - avval prodId bo'yicha, topilmasa nom+bo'lim bo'yicha bog'laymiz
+  var missing=[];
+  calcRows={mahsulot:[],tikish:[],ustanovka:[]};
+  ['mahsulot','tikish','ustanovka'].forEach(function(type){
+    ((o.rows&&o.rows[type])||[]).forEach(function(row){
+      var prod=null;
+      if(row.prodId) prod=products.find(function(p){return p.id===row.prodId;});
+      if(!prod) prod=products.find(function(p){return p.bolim===type&&p.name===row.name;});
+      if(prod){
+        calcRows[type].push({id:++rowCnt,prodId:prod.id,miqdor:row.miqdor});
+      } else {
+        missing.push(row.name);
+      }
+    });
+  });
+  saveCalc();
+
+  orderEditId=id;
+  tarixOpenId=null;
+
+  renderRooms();renderAndoza();renderAllRows();renderDetailSummary();
+  showEditBanner(o.ism);
+  switchPage('mahsulotlar');
+
+  if(missing.length){
+    showSnack('⚠️ Topilmadi: '+missing.join(', ')+" — qo'lda qo'shing");
+  } else {
+    showSnack('✏️ Tahrirlash rejimi — o\'zgartirib, "Saqlash"ni bosing');
+  }
+}
+function cancelEditOrder(){
+  if(!confirm("Tahrirlashni bekor qilamiz? Joriy kiritilgan o'zgarishlar saqlanmaydi."))return;
+  orderEditId=null;
+  hideEditBanner();
+  resetAllData();
+  showSnack('Tahrirlash bekor qilindi');
+}
+function showEditBanner(ism){
+  var b=document.getElementById('edit-banner');
+  var n=document.getElementById('edit-banner-name');
+  if(n) n.textContent=ism||'';
+  if(b) b.style.display='flex';
+}
+function hideEditBanner(){
+  var b=document.getElementById('edit-banner');
+  if(b) b.style.display='none';
+}
+
 function deleteTarixItem(id){
   if(!confirm("Ushbu buyurtmani tarixdan o'chirishni tasdiqlaysizmi?"))return;
   orders=orders.filter(function(o){return o.id!==id;});

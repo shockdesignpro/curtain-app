@@ -145,6 +145,8 @@ function renderDetailSummary(){
 
 // ---- SAQLASH SAHIFASI OLDINDAN KO'RISH ----
 function renderSaqlash(){
+  var saveBtn=document.getElementById('btn-save-jpg');
+  if(saveBtn) saveBtn.innerHTML = orderEditId ? "✅ O'zgartirishni saqlash" : "📸 JPG rasmini saqlash";
   var ism=document.getElementById('mijoz-ism').value||'—';
   var manzil=document.getElementById('mijoz-manzil').value||'—';
   var tel=document.getElementById('mijoz-tel').value||'—';

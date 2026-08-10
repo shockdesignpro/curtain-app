@@ -31,6 +31,10 @@
 
 <!-- PAGE: MAHSULOTLAR -->
 <div class="page" id="page-mahsulotlar">
+  <div class="card" id="edit-banner" style="display:none;background:var(--amber-light);border:1.5px solid var(--amber);display:none;align-items:center;justify-content:space-between;gap:8px;padding:11px 14px;">
+    <span style="font-size:12px;font-weight:800;color:#a06800;">✏️ Buyurtma tahrirlanmoqda: <span id="edit-banner-name"></span></span>
+    <button onclick="cancelEditOrder()" style="background:#fff;color:#a06800;border:1.5px solid var(--amber);border-radius:8px;padding:6px 10px;font-size:11px;font-weight:800;cursor:pointer;font-family:var(--font);white-space:nowrap;">Bekor qilish</button>
+  </div>
   <div class="client-card">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
       <h3 style="margin-bottom:0;">👤 Mijoz ma'lumotlari</h3>
@@ -166,7 +170,7 @@
     <div id="preview-totals"></div>
   </div>
   <div class="save-actions">
-    <button class="save-btn save-btn-jpg" onclick="exportJPG()">
+    <button class="save-btn save-btn-jpg" id="btn-save-jpg" onclick="exportJPG()">
       📸 JPG rasmini saqlash
     </button>
     <button class="save-btn" style="background:var(--blue-light);color:var(--blue);" onclick="tozalaHisob()">
