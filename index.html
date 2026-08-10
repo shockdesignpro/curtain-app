@@ -16,6 +16,18 @@
 </head>
 <body>
 
+<!-- KIRISH DEVORI (PIN LOCK) — ilova ochilganda birinchi shu ko'rinadi -->
+<div class="lock-ov" id="lock-ov">
+  <div class="lock-card">
+    <div class="lock-icon">🔒</div>
+    <div class="lock-title">Lobar Parda</div>
+    <div class="lock-sub">Davom etish uchun parolni kiriting</div>
+    <input type="password" id="lock-pin-input" class="lock-input" inputmode="numeric" maxlength="8" placeholder="••••" autocomplete="off"/>
+    <button class="lock-btn" onclick="tryUnlock()">Kirish</button>
+    <div class="lock-err" id="lock-err"></div>
+  </div>
+</div>
+
 <!-- TOPBAR -->
 <div class="topbar">
   <span style="font-size:22px;">🧵</span>
@@ -321,6 +333,9 @@
 
 <!-- html2canvas endi CDN emas, lokal fayldan yuklanadi (2-qadam: offline'da ham ishlashi uchun) -->
 <script src="js/vendor/html2canvas.min.js"></script>
+
+<!-- Kirish devori (PIN) — boshqa modullardan oldin, tezroq ishga tushishi uchun -->
+<script src="js/auth.js"></script>
 
 <!-- Ilova modullari — tartib MUHIM: utils va state birinchi, main eng oxirida -->
 <script src="js/utils.js"></script>

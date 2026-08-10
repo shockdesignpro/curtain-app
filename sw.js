@@ -3,12 +3,13 @@
 // Versiyani o'zgartirsangiz (masalan v2, v3...), foydalanuvchilarga
 // yangi fayllar avtomatik yetkaziladi.
 // ============================================================
-var CACHE_NAME = 'parda-kalk-v5';
+var CACHE_NAME = 'parda-kalk-v6';
 var APP_SHELL = [
   './index.html',
   './manifest.json?v=2',
   './css/style.css',
   './js/vendor/html2canvas.min.js',
+  './js/auth.js',
   './js/utils.js',
   './js/state.js',
   './js/mijoz.js',

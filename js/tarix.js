@@ -65,6 +65,11 @@ function setTikuvchiIsm(orderId,val){
   o.tikuvchiIsmi=val;
   saveOrders();
 }
+function progressStage(pct){
+  if(pct>=90) return 'stage-green';
+  if(pct>=50) return 'stage-amber';
+  return 'stage-red';
+}
 function buildStepsHtml(o){
   var st=o.status||{};
   var rows=ORDER_STEPS.map(function(s){
@@ -85,12 +90,17 @@ function buildStepsHtml(o){
     +'</div>';
   }).join('');
   var done=orderStepsDone(o);
+  var pct=Math.round(done/ORDER_STEPS.length*100);
+  var stage=progressStage(pct);
+  var progressHtml='<div class="progress-wrap"><div class="progress-fill '+stage+(pct>=100?' full':'')+'" style="width:'+pct+'%;"></div></div>'
+    +'<div class="progress-pct">'+pct+'%</div>';
   return '<div style="margin-top:8px;padding:10px;border-radius:10px;background:var(--bg);border:1.5px solid var(--border);">'
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">'
       +'<span style="font-size:12px;font-weight:800;color:var(--teal-dark);">🧾 Zakaz statusi</span>'
       +'<span style="font-size:11px;color:var(--muted);font-weight:700;">'+done+'/'+ORDER_STEPS.length+'</span>'
     +'</div>'
-    +rows
+    +progressHtml
+    +'<div style="margin-top:6px;">'+rows+'</div>'
   +'</div>';
 }
 function addPayment(id){
@@ -238,7 +248,13 @@ function renderTarix(){
     +'</div>';
 
     var stepsDone=orderStepsDone(o);
-    var stepsBadge='<span style="font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px;color:var(--purple);background:var(--purple-light);white-space:nowrap;">🧾 '+stepsDone+'/'+ORDER_STEPS.length+'</span>';
+    var stepsPct=Math.round(stepsDone/ORDER_STEPS.length*100);
+    var stepsColors={
+      'stage-red':{color:'var(--red)',bg:'var(--red-light)'},
+      'stage-amber':{color:'#a06800',bg:'var(--amber-light)'},
+      'stage-green':{color:'var(--teal)',bg:'var(--teal-light)'}
+    }[progressStage(stepsPct)];
+    var stepsBadge='<span style="font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px;color:'+stepsColors.color+';background:'+stepsColors.bg+';white-space:nowrap;">🧾 '+stepsDone+'/'+ORDER_STEPS.length+' ('+stepsPct+'%)</span>';
 
     return '<div class="card" style="margin-bottom:10px;">'
       +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;cursor:pointer;" onclick="toggleTarixDetail(\''+o.id+'\')">'
