@@ -1,0 +1,245 @@
+/* 1.0.6: compact order views, square artwork and independent settings. */
+#mobile-shell .brand-intro{position:fixed;inset:0;z-index:10000;background:#000;display:grid;place-items:center}
+#mobile-shell .brand-intro video{width:100%;height:100%;object-fit:contain}
+#mobile-shell #intro-skip{position:absolute;right:16px;top:calc(16px + var(--safe-area-inset-top,env(safe-area-inset-top,0px)));background:rgba(0,0,0,.75);color:#fff;border:1px solid rgba(255,255,255,.6);border-radius:22px;padding:10px 15px;min-height:44px;font-size:13px}
+#mobile-shell #intro-play{position:absolute;background:#fff;color:#1a2420;border:0;border-radius:12px;padding:14px 18px}
+#mobile-shell .app-brand{display:flex;flex-direction:column;gap:2px}
+#mobile-shell .brand-label{margin:0;font-size:9px}
+#mobile-shell .order-thumb,#mobile-shell .order-record .order-thumb{width:48px;height:48px;aspect-ratio:1;object-fit:cover}
+#mobile-shell .sample-photo{aspect-ratio:1}
+#mobile-shell .compact-order{padding:10px;gap:9px}
+#mobile-shell .compact-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:6px}
+#mobile-shell .compact-heading .compact-name{min-width:0;font-size:13px}
+#mobile-shell .compact-heading .state-badge{flex-shrink:0;max-width:48%;text-align:right;font-size:9px}
+#mobile-shell .compact-foot{margin-top:3px}
+#mobile-shell .compact-date{font-size:10px}
+#mobile-shell .order-record{position:relative;padding:10px!important;scroll-margin-top:90px}
+#mobile-shell .order-actions{display:flex;justify-content:flex-end;gap:3px;margin:0 0 5px}
+#mobile-shell .order-record .order-actions .btn-icon{padding:0;width:36px;min-width:36px;height:36px;min-height:36px;border:1px solid var(--border);background:var(--bg);border-radius:9px;color:var(--teal)}
+#mobile-shell .order-actions .delete-order{color:var(--red)!important}
+#mobile-shell .order-head-name{font-size:14px;margin-bottom:2px}
+#mobile-shell .order-record-head{gap:9px}
+#mobile-shell .order-head-foot{gap:4px;margin-top:4px}
+#mobile-shell .order-money{margin-top:8px;padding-top:8px}
+#mobile-shell .order-money span{font-size:10px}
+#mobile-shell .order-money strong{font-size:13px}
+#mobile-shell .order-record .progress-wrap{background:var(--border);height:7px;box-shadow:none}
+#mobile-shell .order-record .progress-fill{box-shadow:none}
+#mobile-shell .order-record .progress-fill:after{display:none}
+[data-theme="dark"] #mobile-shell .order-record button[onclick*="addPayment"]{background:#284e3e!important;color:#eef4f0!important}
+#mobile-shell .order-search{padding:12px;margin-bottom:10px}
+#mobile-shell .order-search h3{font-size:14px;margin:0 0 8px}
+#mobile-shell .order-search label{display:none}
+#mobile-shell .order-search input{min-height:42px;padding:9px 10px;font-size:14px}
+#mobile-shell #page-tarix>.section-intro{display:none}
+#mobile-shell .compact-filters{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:12px}
+#mobile-shell .compact-filters summary{padding:12px;font-size:12px;font-weight:600;cursor:pointer;color:var(--teal)}
+#mobile-shell .compact-filters .order-filters{border:0;padding:0 12px 12px;margin:0;border-radius:0;grid-template-columns:95px minmax(0,1fr);gap:5px}
+#mobile-shell .compact-filters select{min-height:38px;padding:7px;font-size:12px}
+#mobile-shell .compact-filters label{font-size:10px;margin:0}
+#mobile-shell .compact-filters .filter-heading{margin:0}
+#mobile-shell #page-tarix.focused-order>.order-search,#mobile-shell #page-tarix.focused-order>.stats-card,#mobile-shell #page-tarix.focused-order>#ready-soon-card,#mobile-shell #page-tarix.focused-order>.compact-filters,#mobile-shell #page-tarix.focused-order>#tarix-clear-btn,#mobile-shell #page-tarix.focused-order>.backup-panel,#mobile-shell #page-tarix.focused-order>.sec-head{display:none!important}
+#mobile-shell #focused-order-nav{margin-bottom:10px}
+#mobile-shell #page-settings{max-width:720px;margin:auto}
+#mobile-shell #page-settings h3{font-size:16px;margin-bottom:8px}
+#mobile-shell #page-settings input{width:100%;margin-bottom:10px}
+#mobile-shell #page-settings .add-row-btn{margin:8px 0}
+#mobile-shell #page-settings .settings-divider{border-top:1px solid var(--border);margin:18px 0}
+#mobile-shell #reminder-sound-name{font-size:14px;margin:5px 0 10px;color:var(--text);overflow-wrap:anywhere}
+#mobile-shell .home-tools{flex-wrap:wrap}
+#mobile-shell .home-tools button{flex:1 1 30%}
+
+/* 1.0.7: reference order card and collapsed production status. */
+#mobile-shell .order-record{padding:13px 10px 10px!important;border-radius:17px}
+#mobile-shell .order-actions{position:absolute;right:10px;top:12px;gap:3px;margin:0;z-index:1}
+#mobile-shell .order-record .order-actions .btn-icon{width:29px;min-width:29px;height:30px;min-height:30px;border-radius:8px}
+#mobile-shell .order-record .order-actions svg{width:16px;height:16px}
+#mobile-shell .order-record-head{align-items:flex-start;gap:8px}
+#mobile-shell .order-record .order-thumb{width:44px;height:44px;border-radius:10px}
+#mobile-shell .order-head-name{font-size:15px;line-height:20px;padding-right:96px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+#mobile-shell .order-head-phone{font-size:12px;line-height:17px}
+#mobile-shell .order-head-foot{margin-top:5px;gap:4px}
+#mobile-shell .order-head-foot .state-badge{font-size:10px;padding:3px 6px}
+#mobile-shell .order-money{margin-top:9px;padding-top:10px}
+#mobile-shell .order-money strong{font-size:15px}
+#mobile-shell .order-money span{font-size:11px}
+#mobile-shell .order-status-panel{margin-top:12px;border:1px solid var(--border);border-radius:10px;background:var(--bg)}
+#mobile-shell .order-status-panel summary{padding:12px;font-size:13px;color:var(--teal);font-weight:700;cursor:pointer}
+#mobile-shell #report-period{width:100%;margin-bottom:3px}
+#mobile-shell #page-finance .finance-total{margin-top:12px}
+#mobile-shell #page-finance .finance-grid{grid-template-columns:1fr}
+#mobile-shell #page-finance .finance-grid .card{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#mobile-shell #page-finance .finance-grid span{margin:0;font-size:12px}
+
+/* 1.0.8: anchored form pickers, never a fullscreen native select dialog. */
+#mobile-shell select[data-compact][hidden]{display:none!important}
+#mobile-shell .compact-select-trigger{width:100%;min-width:0;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:24px;position:relative;font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:9px;min-height:36px}
+#mobile-shell .compact-select-trigger:after{content:'⌄';position:absolute;right:8px;top:50%;transform:translateY(-50%);color:var(--teal)}
+.compact-select-menu{position:fixed;z-index:10000;overflow:auto;overscroll-behavior:contain;background:var(--card,#fff);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:4px;box-shadow:0 8px 24px #0003}
+.compact-select-menu button{display:block;width:100%;min-height:40px;padding:8px 10px;text-align:left;border:0;border-radius:8px;background:transparent;color:inherit;font:inherit;font-size:13px;white-space:normal}
+.compact-select-menu button[aria-selected=true],.compact-select-menu button:focus-visible{background:var(--teal-light,#e6f4f1);color:var(--teal);outline:none;font-weight:700}
+
+#mobile-shell #page-finance .finance-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#mobile-shell #page-finance .finance-grid .card{display:block;min-width:0;padding:12px 10px}
+#mobile-shell #page-finance .finance-grid strong{display:block;font-size:clamp(14px,4vw,19px);overflow-wrap:anywhere;margin-top:8px}
+
+#mobile-shell .report-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+#mobile-shell .report-heading h2{margin:0}
+#mobile-shell .report-filter{width:116px;flex:0 0 116px}
+#mobile-shell .report-filter .compact-select-trigger{font-size:13px;min-height:36px;margin:0;padding:7px 26px 7px 12px}
+
+/* 1.0.12: compact editor, flexible widths from small phones to large screens. */
+#mobile-shell .mobile-main{padding-top:12px}
+#mobile-shell .editor-progress{margin-bottom:12px}
+#mobile-shell .editor-progress button{min-height:38px}
+#mobile-shell #page-mahsulotlar .client-card{padding:14px;border-left:4px solid var(--teal)}
+#mobile-shell #page-mahsulotlar .customer-title{padding-bottom:6px;margin-bottom:8px}
+#mobile-shell #page-mahsulotlar .client-field{margin-bottom:10px}
+#mobile-shell #page-mahsulotlar label{margin-bottom:4px;font-size:12px}
+#mobile-shell #page-mahsulotlar input:not([type=file]){min-height:40px;padding:8px 10px;font-size:14px}
+#mobile-shell #page-mahsulotlar .chip{min-height:32px;padding:5px 11px}
+#mobile-shell #page-mahsulotlar .room-block{padding:12px;margin-bottom:10px}
+#mobile-shell #page-mahsulotlar .dimension-grid{gap:8px;grid-template-columns:repeat(2,minmax(0,1fr))}
+#mobile-shell #page-mahsulotlar .dimension-grid input{min-height:38px!important;padding:7px 9px!important}
+#mobile-shell #page-mahsulotlar .window-block{margin-top:10px;padding-top:10px}
+#mobile-shell #page-mahsulotlar .window-title{margin-bottom:7px;font-size:12px}
+#mobile-shell #page-mahsulotlar .room-actions button{min-height:36px;padding:7px}
+#mobile-shell #page-mahsulotlar .sec-head,#mobile-shell #page-xizmatlar .sec-head,#mobile-shell #page-hisob .sec-head{margin:14px 0 8px;font-size:14px}
+#mobile-shell #page-xizmatlar .card{padding:12px;margin-bottom:12px}
+#mobile-shell #page-xizmatlar{--calc-columns:minmax(0,1fr) minmax(46px,.36fr) minmax(40px,.30fr) minmax(64px,.54fr) 28px}
+#mobile-shell #page-xizmatlar .col-labels{display:grid;grid-template-columns:var(--calc-columns);gap:5px;padding:0;margin:0 0 5px;font-size:10px;color:var(--muted)}
+#mobile-shell #page-xizmatlar .calc-row{grid-template-columns:var(--calc-columns);align-items:center;gap:5px;margin:0 0 7px;padding:0;border:0}
+#mobile-shell #page-xizmatlar .calc-product{grid-column:1;grid-row:1}
+#mobile-shell #page-xizmatlar .calc-fields{display:contents}
+#mobile-shell #page-xizmatlar .calc-fields label:nth-child(1){grid-column:2;grid-row:1}
+#mobile-shell #page-xizmatlar .calc-fields label:nth-child(2){grid-column:3;grid-row:1}
+#mobile-shell #page-xizmatlar .calc-row .field-label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+#mobile-shell #page-xizmatlar .calc-row input,#mobile-shell #page-xizmatlar .calc-row .compact-select-trigger{height:38px;min-height:38px;padding:7px 4px;font-size:12px;line-height:1.3;border-radius:8px}
+#mobile-shell #page-xizmatlar .calc-row .compact-select-trigger{padding-left:7px;padding-right:19px;font-size:12px}
+#mobile-shell #page-xizmatlar .calc-total{grid-column:4;grid-row:1;display:block;padding:0;background:none;border-radius:0;min-width:0}
+#mobile-shell #page-xizmatlar .calc-total>span{display:none}
+#mobile-shell #page-xizmatlar .calc-row .row-sum{font-size:12px;color:var(--text);line-height:1.3}
+#mobile-shell #page-xizmatlar .calc-row .del-btn{grid-column:5;grid-row:1;width:28px;height:38px;min-height:38px;border:0;background:none;padding:4px;align-self:center}
+#mobile-shell #page-xizmatlar .add-row-btn{min-height:38px;padding:8px;margin-top:10px;font-size:13px}
+#mobile-shell #page-xizmatlar .subtotal-row{margin-top:7px;padding-top:8px;gap:8px}
+#mobile-shell #page-xizmatlar .subtotal-row .sv{font-size:14px}
+#mobile-shell #page-xizmatlar .chip-grp{display:none}
+#mobile-shell #page-hisob .totals-card{padding:15px;border-radius:16px;margin-bottom:12px}
+#mobile-shell #page-hisob .tot-line{padding:6px 0;gap:8px}
+#mobile-shell #page-hisob .tot-line .tl{font-size:12px}
+#mobile-shell #page-hisob .tot-line .tv{font-size:14px}
+#mobile-shell #page-hisob .grand-row{padding-top:10px;gap:8px}
+#mobile-shell #page-hisob .grand-row .gv{font-size:clamp(20px,5vw,28px);overflow-wrap:anywhere}
+#mobile-shell #page-hisob .card{padding:12px;margin-bottom:10px}
+#mobile-shell #page-hisob [id^=detail-]>div{font-size:12px!important;gap:4px}
+#mobile-shell #page-hisob [id^=detail-]>div>span:first-child{min-width:0;overflow-wrap:anywhere}
+#mobile-shell #page-hisob [id^=detail-]>div>span:not(:first-child){flex-shrink:0}
+@media(min-width:600px){
+ #mobile-shell .mobile-main{width:100%;max-width:780px;margin-inline:auto}
+ #mobile-shell #page-xizmatlar .calc-row input,#mobile-shell #page-xizmatlar .calc-row .compact-select-trigger{font-size:14px}
+ #mobile-shell #page-xizmatlar .calc-row .row-sum{font-size:14px}
+ #mobile-shell #page-mahsulotlar .dimension-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:350px){
+ #mobile-shell #page-xizmatlar .card{padding:9px}
+ #mobile-shell #page-xizmatlar{--calc-columns:minmax(0,1fr) 44px 36px 60px 24px}
+ #mobile-shell #page-xizmatlar .calc-row .del-btn{width:24px}
+ #mobile-shell #page-xizmatlar .calc-row input,#mobile-shell #page-xizmatlar .calc-row .compact-select-trigger,#mobile-shell #page-xizmatlar .calc-row .row-sum{font-size:11px}
+}
+
+#mobile-shell #page-hisob .totals-card{background:linear-gradient(125deg,var(--teal-dark),var(--teal));color:#fff;border:0}
+#mobile-shell #page-hisob .totals-card .tl,#mobile-shell #page-hisob .totals-card .tv,#mobile-shell #page-hisob .totals-card .gv,#mobile-shell #page-hisob .totals-card .gl{color:#fff}
+#mobile-shell #page-hisob .totals-card .tot-line{border-color:#ffffff30}
+#mobile-shell #page-hisob .totals-card .grand-row{border-color:#ffffff40}
+#mobile-shell #page-hisob .totals-card .xizmat-box{background:#ffffff20;color:#fff}
+[data-theme=dark] #mobile-shell #page-hisob .totals-card{background:linear-gradient(125deg,#15382e,#205642)}
+
+#mobile-shell #page-hisob .totals-card .xizmat-box .xl,#mobile-shell #page-hisob .totals-card .xizmat-box .xv{color:#fff}
+
+#mobile-shell .room-cost-picker{border-left:3px solid var(--teal)}
+#mobile-shell #cost-room-dimensions{font-size:12px;color:var(--muted);line-height:1.5;margin:8px 0;overflow-wrap:anywhere}
+#mobile-shell #cost-room-total{font-size:14px;color:var(--teal)}
+#mobile-shell .room-cost-detail summary{display:flex;justify-content:space-between;gap:10px;font-weight:700;font-size:13px}
+#mobile-shell .room-cost-detail p{font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+#mobile-shell .room-cost-detail h4{font-size:12px;color:var(--teal);margin:10px 0 5px}
+#mobile-shell .room-cost-line{display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border)}
+#mobile-shell .room-cost-line span{min-width:0;overflow-wrap:anywhere}
+#mobile-shell .room-cost-line strong{flex-shrink:0}
+
+/* Shared saved-room details in orders, reports and the editor. */
+#mobile-shell .room-cost-groups{min-width:0}
+#mobile-shell .room-cost-detail{padding:10px 12px;margin:8px 0;box-shadow:none}
+#mobile-shell .room-cost-detail summary{cursor:pointer;align-items:center;list-style:none}
+#mobile-shell .room-cost-detail summary::before{content:'›';color:var(--teal);font-size:20px;flex:0 0 10px}
+#mobile-shell .room-cost-detail[open] summary::before{transform:rotate(90deg)}
+#mobile-shell .room-cost-name{flex:1;min-width:0;overflow-wrap:anywhere}
+#mobile-shell .room-cost-detail summary strong{max-width:50%;text-align:right;overflow-wrap:anywhere}
+#mobile-shell .room-cost-detail h4{display:flex;justify-content:space-between;gap:8px}
+#mobile-shell .room-cost-line small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+#mobile-shell .room-cost-line strong{max-width:50%;white-space:normal;overflow-wrap:anywhere;text-align:right}
+#mobile-shell .room-cost-empty{margin:4px 0;font-size:11px}
+#mobile-shell .report-order-group{border:1px solid var(--border);border-radius:14px;padding:8px;margin:10px 0;min-width:0}
+#mobile-shell .report-order-group>.compact-order{margin:0;box-shadow:none;border:0}
+
+.rcpt-room-group{margin:0 0 30px;padding-top:6px;break-inside:avoid;color:var(--text)}
+.rcpt-room-group h3{font-size:15px;color:var(--teal-dark);border-bottom:2px solid var(--teal);padding:8px 6px;margin:0 0 8px;overflow-wrap:anywhere}
+.room-dimension{display:flex;justify-content:space-between;gap:10px;padding:6px;border-bottom:1px solid var(--border);font-size:13px}
+.room-dimension em{font-style:normal;color:var(--muted)}
+.room-dimension strong{flex-shrink:0}
+.room-category,.room-grand{display:flex;justify-content:space-between;gap:8px;background:var(--teal);color:white;padding:6px 8px;font-size:13px;font-weight:800;margin-top:14px;border-radius:6px}
+.category-tikish{background:var(--amber)}
+.category-ustanovka{background:var(--purple)}
+.room-item{display:grid;grid-template-columns:minmax(0,1fr) 62px 36px 76px;gap:4px;padding:6px;border-bottom:1px solid var(--border);font-size:12px;align-items:start}
+.room-item span:first-child{overflow-wrap:anywhere}
+.room-item span:nth-child(2),.room-item span:nth-child(3){color:var(--muted);text-align:right}
+.room-item strong{text-align:right;overflow-wrap:anywhere}
+.room-grand{border-radius:0}
+@media(max-width:380px){#mobile-shell .room-item{grid-template-columns:minmax(0,1fr) 47px 26px 62px;font-size:11px;gap:3px}#mobile-shell .room-dimension{font-size:11px;flex-wrap:wrap}#mobile-shell .room-category{font-size:11px}}
+
+/* Flex rows also render correctly in the JPG canvas exporter. */
+.room-item{display:flex;gap:4px}
+.room-item span:first-child{flex:1;min-width:0}
+.room-item span:nth-child(2){flex:0 0 62px}
+.room-item span:nth-child(3){flex:0 0 36px}
+.room-item strong{flex:0 0 76px}
+@media(max-width:380px){#mobile-shell .room-item span:nth-child(2){flex-basis:47px}#mobile-shell .room-item span:nth-child(3){flex-basis:26px}#mobile-shell .room-item strong{flex-basis:62px}}
+
+#mobile-shell .room-cost-picker{background:linear-gradient(125deg,var(--teal-dark),var(--teal));color:#fff;border:0}
+[data-theme=dark] #mobile-shell .room-cost-picker{background:linear-gradient(125deg,#15382e,#205642)}
+#mobile-shell .room-cost-picker label,#mobile-shell #cost-room-dimensions,#mobile-shell #cost-room-total{color:#fff}
+#cost-parda-tabs{display:flex;gap:6px;overflow-x:auto;padding:8px 0}
+#cost-parda-tabs[hidden],#catalog-tools[hidden]{display:none}
+#cost-parda-tabs button{flex-shrink:0;border:1px solid #ffffff66;border-radius:8px;padding:7px 10px;color:white;background:transparent;font:inherit;font-size:12px}
+#cost-parda-tabs button[aria-selected=true]{background:#fff;color:var(--teal-dark);font-weight:800}
+#catalog-tools{display:flex;gap:5px}
+#catalog-tools .topbar-btn{border-radius:50%;width:34px;height:34px}
+#catalog-tools img{width:21px;height:21px}
+.order-room{border:1px solid var(--border);border-radius:10px;padding:8px;margin:10px 0}
+.order-room summary{font-size:13px;font-weight:800;color:var(--teal-dark);cursor:pointer;overflow-wrap:anywhere}
+.order-status-panel>summary{display:flex;justify-content:space-between;align-items:center;gap:10px}
+
+#mobile-shell.catalog-open .topbar{gap:6px;padding-inline:10px}
+#mobile-shell.catalog-open .topbar-btn{width:32px;height:32px;flex-shrink:0}
+#mobile-shell.catalog-open .topbar h1{font-size:18px}
+#mobile-shell.catalog-open .brand-label{font-size:8px}
+
+#mobile-shell .catalog-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#mobile-shell .catalog-title-row h2{margin:0}
+#mobile-shell .catalog-title-row #catalog-tools{flex-shrink:0;gap:8px}
+#mobile-shell .catalog-title-row .topbar-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);background:var(--card);border-radius:50%}
+
+/* Stable price and quantity columns, including six-digit grouped prices. */
+#mobile-shell #page-xizmatlar{--calc-columns:minmax(0,1fr) 70px 44px minmax(64px,.54fr) 24px}
+#mobile-shell #page-xizmatlar .calc-row .price-input{font-variant-numeric:tabular-nums;text-align:center;padding-inline:3px}
+#mobile-shell #page-xizmatlar .calc-row .mq-input{text-align:center;padding-inline:3px;font-variant-numeric:tabular-nums}
+#mobile-shell #page-xizmatlar .col-labels>span:nth-child(2),#mobile-shell #page-xizmatlar .col-labels>span:nth-child(3){text-align:center}
+#mobile-shell #page-xizmatlar .calc-row .del-btn{width:24px}
+@media(max-width:350px){#mobile-shell #page-xizmatlar{--calc-columns:minmax(0,1fr) 64px 38px 59px 22px}#mobile-shell #page-xizmatlar .calc-row .del-btn{width:22px}}
+@media(min-width:600px){#mobile-shell #page-xizmatlar{--calc-columns:minmax(0,1fr) 90px 58px minmax(80px,.54fr) 28px}}
+.room-item span:nth-child(2),.room-item span:nth-child(3){text-align:left}
+.rcpt-price,.rcpt-mq{text-align:left}
+.room-category{align-items:center;padding:8px;min-height:34px;line-height:18px;box-sizing:border-box}
+.room-category>span{display:flex;align-items:center;gap:5px;line-height:18px}
+.room-category-icon{display:inline-flex;align-items:center;justify-content:center;line-height:18px;width:18px;flex-shrink:0}
+.room-category>strong{line-height:18px}
+#mobile-shell .order-status-content{padding:8px 12px 12px}

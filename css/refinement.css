@@ -1,0 +1,114 @@
+/* Consistent form rhythm. Scoped to the app so exported receipts keep their layout. */
+#mobile-shell{--space-field:16px;line-height:1.5}
+#mobile-shell .mobile-main{padding:20px 16px 136px}
+#mobile-shell .topbar{min-height:72px;padding-block:12px;padding-top:calc(12px + var(--safe-area-inset-top,env(safe-area-inset-top,0px)));align-items:center}
+#mobile-shell .topbar h1{font-size:18px;line-height:1.3;overflow-wrap:anywhere}
+#mobile-shell .brand-label{margin-bottom:4px;line-height:1.4}
+#mobile-shell .topbar-btn{width:44px;height:44px}
+#mobile-shell .card,#mobile-shell .client-card{padding:16px;margin-bottom:16px;border-radius:16px}
+#mobile-shell .room-editor{padding:0;box-shadow:none;border:0}
+#mobile-shell .room-block{padding:14px;margin-bottom:12px}
+#mobile-shell .customer-title{padding-bottom:14px;margin-bottom:16px;align-items:center}
+#mobile-shell .customer-title h3{font-size:15px;line-height:1.4}
+#mobile-shell .client-field,#mobile-shell .form-row{margin-bottom:16px}
+#mobile-shell label,#mobile-shell .client-field label{display:block;font-size:12px;font-weight:600;line-height:1.5;margin-bottom:6px;color:var(--muted)}
+#mobile-shell input:not([type=file]):not([type=checkbox]),#mobile-shell select{min-height:48px;padding:12px;font-size:16px;line-height:1.4;border-radius:10px;vertical-align:middle}
+#mobile-shell .sec-head{margin:24px 0 12px;font-size:16px;line-height:1.4;gap:8px;align-items:center}
+#mobile-shell #page-xizmatlar>.sec-head:first-child{margin-top:20px}
+#mobile-shell .editor-progress{grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:20px;padding:4px;gap:4px}
+#mobile-shell .editor-progress button{min-height:44px;font-size:12px;line-height:1.4;align-items:center;justify-content:center}
+#mobile-shell .editor-progress button>span{flex-shrink:0}
+#mobile-shell .editor-dock{gap:12px;align-items:center;padding:12px 16px calc(12px + var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)))}
+#mobile-shell .editor-dock>div{flex:1}
+#mobile-shell .editor-dock>div>span{font-size:12px;line-height:1.5;margin-bottom:4px}
+#mobile-shell .editor-dock strong{font-size:18px;line-height:1.4;font-variant-numeric:tabular-nums}
+#mobile-shell .editor-dock button{min-height:48px;font-size:13px;padding:12px 14px;gap:8px}
+#mobile-shell .add-row-btn{min-height:48px;padding:12px;font-size:14px;line-height:1.4;display:flex;align-items:center;justify-content:center;gap:8px}
+#mobile-shell .small-action,#mobile-shell .btn-icon,#mobile-shell .room-actions button{min-height:44px}
+#mobile-shell .input-note,#mobile-shell #reminder-hint{font-size:12px;line-height:1.6;margin-top:8px}
+#mobile-shell .dimension-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#mobile-shell .dimension-grid label{font-size:12px;line-height:1.5;margin-bottom:6px;white-space:normal}
+#mobile-shell .dimension-grid input{min-height:48px!important;padding:12px!important}
+#mobile-shell .dimension-grid select{font-size:14px;min-height:48px;padding:10px}
+#mobile-shell .window-title{font-size:14px;margin-bottom:12px;line-height:1.4}
+#mobile-shell .window-block{margin-top:14px;padding-top:14px}
+#mobile-shell .chip-grp{gap:8px;align-items:center}
+#mobile-shell .chip,#mobile-shell .bolim-chip{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 12px;font-size:12px;line-height:1.4}
+#mobile-shell .col-labels{display:none}
+
+/* Product above; price and quantity beside each other; total on its own row.
+   Real labels replace pseudo-elements drawn on top of editable numbers. */
+#mobile-shell .calc-row{display:grid;grid-template-columns:minmax(0,1fr) 44px;grid-template-rows:auto;align-items:start;gap:12px;margin:0 0 16px;padding:0 0 16px;border-bottom:1px solid var(--border)}
+#mobile-shell .calc-row::before,#mobile-shell .calc-row::after{content:none;display:none}
+#mobile-shell .calc-row .calc-product{grid-column:1;grid-row:auto;min-width:0;margin:0}
+#mobile-shell .calc-row .field-label{display:block;font-size:12px;line-height:18px;font-weight:600;color:var(--muted);margin:0 0 6px}
+#mobile-shell .calc-row select{display:block;grid-column:auto;grid-row:auto;width:100%;min-height:48px;padding:12px 30px 12px 12px;font-size:15px;font-weight:600;background:var(--bg);margin:0}
+#mobile-shell .calc-row .del-btn{grid-column:2;grid-row:1;align-self:end;display:flex;align-items:center;justify-content:center;width:44px;height:48px;padding:0;margin:0;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--muted)}
+#mobile-shell .calc-row .del-btn:hover{background:var(--red-light);color:var(--red);border-color:var(--red)}
+#mobile-shell .calc-fields{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:12px;align-items:start}
+#mobile-shell .calc-fields label{min-width:0;margin:0}
+#mobile-shell .calc-row .price-input,#mobile-shell .calc-row .mq-input{display:block;grid-column:auto;grid-row:auto;width:100%;min-width:0;height:48px;min-height:48px;margin:0;padding:12px;font-size:16px;font-weight:600;line-height:22px;text-align:left;color:var(--text);background:var(--bg);font-variant-numeric:tabular-nums}
+#mobile-shell .calc-total{grid-column:1/-1;display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:10px 12px;border-radius:10px;background:var(--teal-light)}
+#mobile-shell .calc-total>span{font-size:12px;line-height:1.5;color:var(--teal);flex-shrink:0}
+#mobile-shell .calc-row .row-sum{display:block;grid-column:auto;grid-row:auto;min-height:0;margin:0;padding:0;min-width:0;font-size:16px;line-height:1.5;font-weight:700;text-align:right;color:var(--teal);white-space:normal;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+#mobile-shell #page-xizmatlar .chip-grp:empty{display:none}
+#mobile-shell #page-xizmatlar .chip-grp:not(:empty){margin:0 0 12px}
+#mobile-shell .subtotal-row{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-top:16px;padding:14px 0 0;border-top:1px solid var(--border);border-radius:0;background:none}
+#mobile-shell .subtotal-row .sl{font-size:12px;line-height:1.5;color:var(--muted)}
+#mobile-shell .subtotal-row .sv{font-size:16px;line-height:1.5;text-align:right;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+
+/* Catalog: quiet page background, grouped cards, consistent green selections. */
+#mobile-shell #page-catalog .section-intro{margin-bottom:20px}
+#mobile-shell #page-catalog .section-intro h2{line-height:1.3}
+#mobile-shell #page-catalog .dw-body{padding:0;background:transparent}
+#mobile-shell .dw-add-btn{min-height:48px;padding:12px 16px;margin:0 0 16px;font-size:14px;line-height:1.5;border-radius:12px}
+#mobile-shell .dw-search{height:auto;min-height:48px;padding:0 12px;margin:0 0 12px;gap:8px;background:var(--card)}
+#mobile-shell .dw-search>svg{color:var(--muted);flex-shrink:0}
+#mobile-shell .dw-search input{width:100%;min-width:0;padding:12px 0;font-size:14px;background:transparent!important;line-height:1.5}
+#mobile-shell #filter-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+#mobile-shell #filter-chips .chip{flex:1 1 auto;min-height:44px;border-radius:10px;background:var(--card);border:1px solid var(--border);color:var(--muted);white-space:nowrap}
+#mobile-shell #filter-chips .chip.selected{background:var(--teal-light);color:var(--teal);border-color:var(--teal);font-weight:700}
+#mobile-shell .catalog-group{margin:0 0 24px}
+#mobile-shell .catalog-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 10px}
+#mobile-shell .catalog-heading h3{font-size:14px;line-height:1.5;font-weight:650;color:var(--text)}
+#mobile-shell .catalog-heading>span{font-size:12px;line-height:1.5;color:var(--muted)}
+#mobile-shell .catalog-items{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:0 14px;box-shadow:var(--surface-shadow)}
+#mobile-shell .prod-item{display:grid;grid-template-columns:36px minmax(0,1fr) 44px 44px;align-items:center;gap:8px;padding:14px 0;border-bottom:1px solid var(--border)}
+#mobile-shell .prod-item:last-child{border-bottom:0}
+#mobile-shell .prod-badge{display:grid;place-items:center;width:36px;height:40px;min-width:0;margin:0;border-radius:10px;font-size:12px;background:var(--teal-light);color:var(--teal)}
+#mobile-shell .prod-info{min-width:0}
+#mobile-shell .prod-name{font-size:14px;font-weight:650;line-height:1.5;white-space:normal;overflow-wrap:anywhere;overflow:visible;text-overflow:clip}
+#mobile-shell .prod-meta{display:flex;flex-wrap:wrap;gap:0 4px;font-size:12px;line-height:1.5;margin-top:4px;color:var(--muted)}
+#mobile-shell .prod-meta strong{font-weight:500;color:var(--text);overflow-wrap:anywhere}
+#mobile-shell .prod-item .btn-icon{width:44px;height:44px;min-height:44px;min-width:44px;padding:0;margin:0;display:flex;align-items:center;justify-content:center;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--muted)}
+#mobile-shell .prod-item .btn-icon:hover{background:var(--teal-light);color:var(--teal)}
+#mobile-shell .prod-item .btn-icon:last-child:hover{background:var(--red-light);color:var(--red)}
+#mobile-shell #prod-empty{padding:24px 16px!important;background:var(--card);border:1px solid var(--border);border-radius:16px}
+#mobile-shell .modal{max-height:calc(100dvh - 24px);padding:20px 20px max(20px,var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)));overscroll-behavior:contain}
+#mobile-shell .modal-title{font-size:20px;line-height:1.4;margin-bottom:20px;color:var(--text)}
+#mobile-shell .modal .fi{width:100%}
+#mobile-shell .modal .bolim-chip{border-radius:10px;background:var(--bg);color:var(--muted);border:1px solid var(--border)}
+#mobile-shell .modal .bc-m,#mobile-shell .modal .bc-t,#mobile-shell .modal .bc-u{background:var(--teal-light);color:var(--teal);border-color:var(--teal)}
+#mobile-shell .btn-cancel{min-height:48px;line-height:1.4;margin-top:8px}
+#mobile-shell .btn{line-height:1.4}
+#mobile-shell .tot-line{align-items:baseline;gap:16px;padding:10px 0}
+#mobile-shell .tot-line .tl{font-size:13px;line-height:1.5}
+#mobile-shell .tot-line .tv{font-size:15px;line-height:1.5;text-align:right;overflow-wrap:anywhere}
+#mobile-shell .grand-row{align-items:baseline}
+@media(max-width:360px){
+  #mobile-shell .mobile-main{padding-inline:12px}
+  #mobile-shell .topbar{padding-inline:12px;gap:6px}
+  #mobile-shell .topbar h1{font-size:16px}
+  #mobile-shell .editor-progress button{font-size:11px;gap:4px}
+  #mobile-shell .catalog-items{padding-inline:12px}
+  #mobile-shell .prod-item{grid-template-columns:minmax(0,1fr) 44px 44px;gap:8px}
+  #mobile-shell .prod-badge{display:none}
+  #mobile-shell .editor-dock strong{font-size:16px}
+  #mobile-shell .editor-dock button{font-size:12px;padding-inline:10px}
+}
+@media(min-width:760px){
+  #mobile-shell .mobile-main{padding-top:28px}
+  #mobile-shell #page-xizmatlar,#mobile-shell #page-catalog{max-width:720px}
+  #mobile-shell .calc-row{grid-template-columns:minmax(0,1fr) 44px;gap:16px}
+  #mobile-shell .dimension-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}

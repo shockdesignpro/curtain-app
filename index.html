@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0d7a5f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lobar Parda">
+<link rel="manifest" href="manifest.json?v=2">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=2">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=2">
+<title>Lobar Parda</title>
+<link rel="stylesheet" href="css/style.css">
+<!-- Tema (dark/light) sahifa chizilishidan OLDIN belgilanadi - "yorqin welgashish"ning oldini olish uchun -->
+<script>
+(function(){
+  try{
+    var saved = localStorage.getItem('parda_theme');
+    var theme = (saved==='dark'||saved==='light') ? saved
+      : ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  }catch(e){}
+})();
+</script>
+<link rel="stylesheet" href="css/mobile.css"><link rel="stylesheet" href="css/refinement.css"><link rel="stylesheet" href="css/update106.css"><link rel="stylesheet" href="css/pwa.css"></head>
+<body>
+
+<div id="mobile-shell"><div id="brand-intro" hidden></div><!-- KIRISH DEVORI (PIN LOCK) — ilova ochilganda birinchi shu ko'rinadi -->
+<div class="lock-ov" id="lock-ov">
+  <div class="lock-card">
+    <div class="lock-icon" style="color:var(--teal);display:flex;justify-content:center;">
+      <svg width="38" height="38" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M7 10V7a5 5 0 0 1 10 0v3"></path></svg>
+    </div>
+    <div class="lock-title">Lobar Parda</div>
+    <div class="lock-sub">Davom etish uchun parolni kiriting</div>
+    <input type="password" id="lock-pin-input" class="lock-input" inputmode="numeric" maxlength="8" placeholder="••••" autocomplete="off" aria-label="PIN-kod">
+    <button class="lock-btn" onclick="tryUnlock()" type="button">Kirish</button>
+    <div class="lock-err" id="lock-err" role="alert"></div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar"><button class="topbar-btn back-button" id="mobile-back" onclick="mobileBack()" aria-label="Orqaga" type="button">←</button><div class="app-brand"><h1 id="header-title">Lobar</h1><span class="brand-label" id="header-caption">PARDALAR UYI</span></div><button class="topbar-btn" id="theme-toggle-btn" onclick="toggleTheme()" aria-label="Yorug‘ yoki qorong‘i rejim" type="button"></button><button class="topbar-btn" onclick="openQuickActions()" aria-label="Tezkor amallar" type="button"><svg class="icon" width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button></div>
+
+<main class="mobile-main" id="mobile-main"><div class="editor-progress" id="editor-progress" hidden><button data-editor="mahsulotlar" onclick="switchPage('mahsulotlar')" type="button"><span>1</span>Mijoz</button><button data-editor="xizmatlar" onclick="switchPage('xizmatlar')" type="button"><span>2</span>Xizmatlar</button><button data-editor="hisob" onclick="switchPage('hisob')" type="button"><span>3</span>Hisob</button></div><section class="page" id="page-home"><div class="home-intro"><div><p class="overline" id="home-date"></p><h2>Bugungi ishlar</h2></div><span class="home-brand-icon" aria-hidden="true"><svg class="icon" width="26" height="26" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2.5"></circle><circle cx="6" cy="18" r="2.5"></circle><line x1="8.5" y1="7.5" x2="20" y2="19"></line><line x1="8.5" y1="16.5" x2="20" y2="5"></line></svg></span></div>
+<div class="overview-card"><div class="overview-top"><span>Faol buyurtmalar</span><span class="mini-label"><i></i> ISH JARAYONIDA</span></div><div class="overview-main"><strong id="home-active">0</strong><span>ta buyurtma</span></div><div class="atelier-art" aria-hidden="true"><svg viewBox="0 0 160 140" fill="none"><path d="M18 16H142M24 22V124H136V22M80 22V124M24 74H136" stroke="currentColor" stroke-width="1.5"/><path d="M20 20H66C65 55 53 83 20 90V20ZM140 20H94C95 55 107 83 140 90V20Z" fill="currentColor" fill-opacity=".12" stroke="currentColor" stroke-width="1.5"/><path d="M33 21C34 54 29 69 21 80M47 21C47 57 37 77 21 86M127 21C126 54 131 69 139 80M113 21C113 57 123 77 139 86M20 91L32 123H20V91ZM140 91L128 123H140V91Z" stroke="currentColor"/><path d="M70 128H90" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><p class="overview-caption">Har bir buyurtma — e’tiborda.</p></div>
+<div class="dashboard-metrics"><button type="button" onclick="showAllOrders('muddat')"><span>Yaqin muddat <i aria-hidden="true">↗</i></span><b id="home-due-count">0 ta</b><small>Bugun va ertaga</small></button><button type="button" onclick="showUnpaidOrders()"><span>Qarzdorlik <i aria-hidden="true">↗</i></span><b id="home-debt">0 so‘m</b><small>To‘lov kutilmoqda</small></button></div>
+<button class="new-order-primary" onclick="beginMobileOrder()" type="button"><svg class="icon" width="22" height="22" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg><span>Yangi buyurtma<small>Mijoz va o‘lchamlarni kiriting</small></span><b aria-hidden="true">→</b></button>
+
+<button id="resume-draft" class="resume-draft" onclick="resumeMobileOrder()" type="button" hidden>Buyurtmani davom ettirish <span aria-hidden="true">→</span></button>
+<div class="section-title"><h2>Yaqin topshiriladigan</h2><button onclick="showAllOrders('muddat')" type="button">Barchasi →</button></div><div id="home-due"></div>
+<div class="section-title"><h2>Oxirgi buyurtmalar</h2><button onclick="showAllOrders('yangi')" type="button">Barchasi →</button></div><div id="home-recent"></div>
+<div class="home-tools"><button onclick="switchPage('settings')" type="button" aria-label="Sozlamalar">⚙ Sozlamalar</button></div></section><div class="page" id="page-mahsulotlar">
+  <div class="card" id="edit-banner" style="display:none;background:var(--amber-light);border:1.5px solid var(--amber);display:none;align-items:center;justify-content:space-between;gap:8px;padding:11px 14px;">
+    <span style="font-weight:800;color:#a06800;">✏️ Buyurtma tahrirlanmoqda: <span id="edit-banner-name"></span></span>
+    <button onclick="cancelEditOrder()" style="background:#fff;color:#a06800;border:1.5px solid var(--amber);border-radius:8px;padding:6px 10px;font-weight:800;cursor:pointer;font-family:var(--font);white-space:nowrap;" type="button">Bekor qilish</button>
+  </div>
+  <div class="client-card customer-section">
+    <div class="customer-title">
+      <h3><svg class="icon" width="19" height="19" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"></path></svg> Mijoz ma’lumotlari</h3>
+      <button onclick="newClient()" class="small-action" type="button"><svg class="icon" width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Yangi</button>
+    </div>
+    <div class="client-field">
+      <label for="mijoz-ism">Mijoz (ism, familya) *</label>
+      <input type="text" id="mijoz-ism" placeholder="Ism va familiya" oninput="saveClient()" required autocomplete="name">
+    </div>
+    <div class="client-field">
+      <label for="mijoz-manzil">Manzil *</label>
+      <input type="text" id="mijoz-manzil" placeholder="Masalan: Yunusobod, 9-uy" oninput="saveClient()" required autocomplete="street-address">
+    </div>
+    <div class="client-field">
+      <label for="mijoz-tel">Tel raqam *</label>
+      <input type="tel" id="mijoz-tel" value="+998" inputmode="numeric" required oninput="onPhoneInput(this, saveClient)" onfocus="onPhoneFocus(this)" onclick="onPhoneFocus(this)" onkeydown="onPhoneKeydown(event)" autocomplete="tel">
+    </div>
+    <div class="client-field deadline-field">
+      <label for="mijoz-tayyor-sana">Tayyor bo‘lish sanasi (ixtiyoriy)</label>
+      <div class="chip-grp" id="tayyor-chips" style="margin-bottom:8px;">
+        <button class="chip" data-days="3" onclick="setTayyorDays(3)" type="button">+3 kun</button>
+        <button class="chip" data-days="5" onclick="setTayyorDays(5)" type="button">+5 kun</button>
+        <button class="chip" data-days="7" onclick="setTayyorDays(7)" type="button">+7 kun</button>
+      </div>
+      <input type="date" id="mijoz-tayyor-sana" oninput="onTayyorDateInput()">
+      <div style="color:var(--muted);margin-top:6px;line-height:1.5;" id="reminder-hint">Chek saqlanganda tanlangan sana uchun eslatma tayyorlanadi.</div>
+    </div>
+  <p class="input-note">* To‘ldirilishi kerak bo‘lgan maydonlar</p></div>
+
+  <div class="sec-head"><svg width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> Xona o'lchamlari</div>
+  <div class="card room-editor">
+    <div id="room-list"></div>
+    <div class="empty" id="room-empty"><span class="empty-icon"><svg class="icon" width="32" height="32" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"></path><path d="M3 8l9 5 9-5"></path><path d="M12 13v8"></path></svg></span><h3>Birinchi xonani qo‘shing</h3><p>Deraza yoki eshik o‘lchamlarini alohida saqlang.</p></div>
+    <button class="add-row-btn arb-teal" onclick="addRoom()" type="button">＋ Xona qo'shish</button>
+  <p class="input-note">O‘lchamlarni metrda kiriting. Eni tikish va o‘rnatish hisobiga avtomatik o‘tadi.</p></div>
+
+  <div class="sec-head"><svg width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg> Andozalar</div>
+  <div class="card sample-card">
+    <div style="color:var(--muted);margin-bottom:10px;" class="input-note">Mijoz tanlagan parda rasmlari</div>
+    <input type="file" id="andoza-file" accept="image/*" multiple style="display:none;" onchange="onAndozaFiles(this.files)">
+    <button class="add-row-btn arb-teal" onclick="pickGallerySamples()" type="button"><svg class="icon" width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg> Galereyadan tanlash</button>
+    <button class="add-row-btn camera-action" onclick="captureMobilePhoto()" type="button"><svg class="icon" width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg> Kamerada olish</button><div id="andoza-grid" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;"></div>
+    <div class="empty" id="andoza-empty"><span class="empty-icon"><svg class="icon" width="32" height="32" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg></span><h3>Tanlangan andozalar</h3><p>Buyurtma kartasida ham shu rasm ko‘rinadi.</p></div>
+  </div>
+</div>
+
+<div class="page" id="page-xizmatlar"><div class="card room-cost-picker"><label for="cost-room-select">Xona xarajatlari</label><select id="cost-room-select" onchange="selectCostRoom(this.value)"></select><div id="cost-parda-tabs" role="tablist" aria-label="Deraza va eshik xarajatlari" hidden></div><div id="cost-room-dimensions"></div><strong id="cost-room-total"></strong></div>
+  <div class="sec-head"><svg width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"></path><path d="M3 8l9 5 9-5"></path><path d="M12 13v8"></path></svg> Xarajatlar</div>
+  <div class="card">
+    <div class="col-labels"><span>Nomi</span><span>Narx</span><span>Miqdor</span><span>Summa</span><span></span></div>
+    <div id="mahsulot-rows"></div>
+    <div id="mahsulot-quick" class="chip-grp"></div>
+    <button class="add-row-btn arb-teal" onclick="addCalcRow('mahsulot')" type="button">＋ Mahsulot qo‘shish</button>
+    <div class="subtotal-row">
+      <span class="sl">Xarajatlar jami:</span>
+      <span class="sv" style="color:var(--teal)" id="mahsulot-subtotal">0 so'm</span>
+    </div>
+  </div>
+
+  <div class="sec-head"><svg width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.5"></circle><circle cx="6" cy="18" r="2.5"></circle><line x1="8.5" y1="7.5" x2="20" y2="19"></line><line x1="8.5" y1="16.5" x2="20" y2="5"></line></svg> Tikish xizmati</div>
+  <div class="card">
+    <div class="col-labels"><span>Nomi</span><span>Narx</span><span>Miqdor</span><span>Summa</span><span></span></div>
+    <div id="tikish-rows"></div>
+    <div id="tikish-quick" class="chip-grp"></div>
+    <button class="add-row-btn arb-teal" onclick="addCalcRow('tikish')" type="button">＋ Tikish xizmati</button>
+    <div class="subtotal-row">
+      <span class="sl">Tikish jami:</span>
+      <span class="sv" style="color:var(--amber)" id="tikish-subtotal">0 so'm</span>
+    </div>
+  </div>
+
+  <div class="sec-head"><svg width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 1 0-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 0 5.4-5.4l-2.8 2.8-2-2z"></path></svg> O'rnatish xizmati</div>
+  <div class="card">
+    <div class="col-labels"><span>Nomi</span><span>Narx</span><span>Miqdor</span><span>Summa</span><span></span></div>
+    <div id="ustanovka-rows"></div>
+    <div id="ustanovka-quick" class="chip-grp"></div>
+    <button class="add-row-btn arb-teal" onclick="addCalcRow('ustanovka')" type="button">＋ O‘rnatish xizmati</button>
+    <div class="subtotal-row">
+      <span class="sl">O'rnatish jami:</span>
+      <span class="sv" style="color:var(--purple)" id="ustanovka-subtotal">0 so'm</span>
+    </div>
+  </div>
+</div>
+
+<div class="page active" id="page-hisob">
+  <div class="totals-card">
+    <div class="tot-line"><span class="tl">📦 Xarajatlar jami</span><span class="tv" id="t-mahsulot">0 so'm</span></div>
+    <hr class="tot-div">
+    <div class="tot-line"><span class="tl">✂️ Tikish xizmati</span><span class="tv" id="t-tikish">0 so'm</span></div>
+    <div class="tot-line"><span class="tl">🔧 O'rnatish xizmati</span><span class="tv" id="t-ustanovka">0 so'm</span></div>
+    <div class="xizmat-box">
+      <span class="xl">Xizmat haqi jami</span>
+      <span class="xv" id="t-xizmat">0 so'm</span>
+    </div>
+    <div class="grand-row">
+      <span class="gl">💰 JAMI</span>
+      <span class="gv" id="t-grand">0 so'm</span>
+    </div>
+  </div>
+
+  <!-- Summary breakdown -->
+  <div class="sec-head" style="margin-top:8px;"><svg width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="7" x2="16" y2="7"></line><line x1="8" y1="12" x2="16" y2="12"></line><line x1="8" y1="17" x2="13" y2="17"></line></svg> Batafsil</div>
+  <div id="room-cost-summary"></div><div class="card" id="summary-mahsulot-detail" style="display:none;">
+    <div style="font-weight:800;color:var(--teal);margin-bottom:8px;">📦 Xarajatlar</div>
+    <div id="detail-mahsulot"></div>
+  </div>
+  <div class="card" id="summary-tikish-detail" style="display:none;">
+    <div style="font-weight:800;color:var(--amber);margin-bottom:8px;">✂️ Tikish</div>
+    <div id="detail-tikish"></div>
+  </div>
+  <div class="card" id="summary-ustanovka-detail" style="display:none;">
+    <div style="font-weight:800;color:var(--purple);margin-bottom:8px;">🔧 O'rnatish</div>
+    <div id="detail-ustanovka"></div>
+  </div>
+</div>
+
+<div class="page" id="page-tarix">
+  <div class="client-card order-search">
+    <h3 style="display:flex;align-items:center;gap:6px;"><svg width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg> Mijozni qidirish</h3>
+    <div class="client-field" style="margin-bottom:0;">
+      <label for="tarix-search">Telefon raqami yoki ism bo'yicha</label>
+      <input type="text" id="tarix-search" aria-label="Mijoz ismi yoki telefon raqami" value="" oninput="focusedMobileOrderId=null;renderTarixDebounced()" placeholder="Mijoz ismi yoki telefon raqami">
+    </div>
+  </div>
+  <div class="section-intro"><p class="overline">MIJOZLAR VA ISH JARAYONI</p><h2>Buyurtmalar</h2></div>
+  <div class="card" id="ready-soon-card" style="display:none;">
+    <div style="font-weight:800;color:#a06800;margin-bottom:6px;display:flex;align-items:center;gap:6px;">
+      <svg width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15.5 14"></polyline></svg>
+      Yaqin kunlarda tayyor bo'ladigan
+    </div>
+    <div id="ready-soon-list"></div>
+  </div>
+  <details class="compact-filters"><summary>Buyurtmalarni saralash <span id="filter-active-count"></span></summary><div class="order-filters">
+    <div class="filter-heading"><h3>Filtrlar</h3><button type="button" onclick="resetOrderFilters()">Tozalash</button></div>
+    <label for="tarix-pay-filter">To‘lov holati</label>
+    <select id="tarix-pay-filter" onchange="setTarixPayFilter(this.value)">
+      <option value="all">Barcha to‘lovlar</option><option value="none">To‘lanmagan</option><option value="partial">Qisman to‘langan</option><option value="full">To‘liq to‘langan</option><option value="unpaid">Barcha qarzdorlar</option>
+    </select>
+    <label for="tarix-date-filter">Buyurtma yaratilgan kun</label>
+    <select id="tarix-date-filter" onchange="setTarixDateFilter(this.value)">
+      <option value="all">Barcha kunlar</option><option value="today">Bugun</option><option value="week">Shu hafta</option><option value="month">Shu oy</option>
+    </select>
+    <label for="tarix-sort-filter">Ko‘rsatish tartibi</label>
+    <select id="tarix-sort-filter" onchange="setTarixSort(this.value)"><option value="yangi">Yangi buyurtmalar avval</option><option value="muddat">Topshirish muddati bo‘yicha</option></select>
+  </div>
+</details>
+  <button id="focused-order-nav" class="add-row-btn" type="button" hidden onclick="returnFromOrder()">← Orqaga</button><div id="tarix-list"></div>
+  <div class="empty" id="tarix-empty" style="display:none">
+    <div class="empty-icon" style="display:flex;justify-content:center;color:var(--muted);"><svg width="34" height="34" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.5 5h13l3.5 7v7a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-7Z"></path></svg></div>
+    <p id="tarix-empty-text">Hali buyurtmalar tarixi yo'q.</p>
+  </div>
+  <button class="btn-cancel" id="tarix-clear-btn" onclick="tozalaTarix()" style="display:none;color:var(--red);" type="button">
+    🗑️ Butun tarixni tozalash
+  </button>
+  <div class="sec-head"><svg width="15" height="15" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11l3 3v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"></path><path d="M8 4v5h8V4"></path><rect x="7" y="13" width="10" height="7"></rect></svg> Zaxira nusxa</div>
+  <div class="card backup-panel" id="backup-panel">
+    <p style="color:var(--muted);margin-bottom:10px;line-height:1.5;">
+      Butun tarix shu telefonda saqlanadi. Telefon almashtirilsa yoki brauzer keshi tozalansa, ma'lumotlar yo'qolishi mumkin — shu sabab vaqti-vaqti bilan zaxira nusxa faylini yuklab, saqlab qo'ying.
+    </p>
+    <div style="display:flex;gap:8px;">
+      <button class="add-row-btn arb-teal" style="margin-bottom:0;" onclick="exportBackup()" type="button">⬇️ Zaxira olish</button>
+      <button class="add-row-btn arb-teal" style="margin-bottom:0;" onclick="triggerImportBackup()" type="button">⬆️ Tiklash</button>
+    </div>
+    <input type="file" id="backup-file" accept="application/json" style="display:none;" onchange="importBackup(this.files)">
+  </div>
+</div>
+
+<section class="page" id="page-settings"><div class="section-intro"><h2>Sozlamalar</h2><p>Ilovani o‘zingizga moslang.</p></div><div class="card"><h3>Eslatmalar</h3><p class="input-note">Topshirishdan bir kun oldin va topshirish kuni.</p><label for="reminder-time">Eslatma vaqti</label><input id="reminder-time" type="time" value="10:00"><button class="add-row-btn" type="button" onclick="saveReminderSettings()">Vaqtni saqlash</button><div class="settings-divider"></div><label>Eslatma musiqasi</label><p id="reminder-sound-name">Standart ovoz</p><button class="add-row-btn" type="button" onclick="chooseReminderSound()">Musiqani tanlash</button><button class="add-row-btn" type="button" onclick="openReminderSystemSettings()">Telefon bildirishnoma sozlamalari</button><p class="input-note">Ovoz va bildirishnomalar telefon sozlamalariga ham bog‘liq.</p></div><div class="card"><h3>Kirish paroli</h3><label>Joriy parol</label><input id="settings-old-pin" type="password" inputmode="numeric" autocomplete="current-password"><label>Yangi parol</label><input id="settings-new-pin" type="password" inputmode="numeric" maxlength="12" autocomplete="new-password"><label>Yangi parolni takrorlang</label><input id="settings-repeat-pin" type="password" inputmode="numeric" maxlength="12" autocomplete="new-password"><button class="add-row-btn" onclick="updateAppPassword(false)">Parolni saqlash</button><button class="add-row-btn" onclick="updateAppPassword(true)">Parolni olib tashlash</button></div></section>
+<section class="page" id="page-catalog"><div class="section-intro"><p class="overline">MAHSULOT VA XIZMATLAR</p><div class="catalog-title-row"><h2>Katalog</h2><div id="catalog-tools" hidden><button class="topbar-btn" type="button" aria-label="Katalog import" onclick="document.getElementById('catalog-file').click()"><img src="assets/import.png" alt=""></button><button class="topbar-btn" type="button" aria-label="Katalog eksport" onclick="exportCatalog()"><img src="assets/export.png" alt=""></button></div></div><p>Narxlar va o‘lchov birliklarini boshqaring.</p></div><input id="catalog-file" type="file" accept=".csv,text/csv" hidden onchange="importCatalog(this.files)"><div class="dw-body">
+    <button class="dw-add-btn" onclick="openAddModal()" type="button">＋ Mahsulot yoki xizmat qo‘shish</button>
+    <div class="dw-search">
+      <svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" id="prod-search" aria-label="Mahsulot va xizmatlarni qidirish" placeholder="Mahsulot yoki xizmatni qidirish" oninput="renderProdListDebounced()">
+    </div>
+    <div class="chip-grp" id="filter-chips">
+      <button class="chip" onclick="setFilter('all')" data-f="all" type="button">Barchasi</button>
+      <button class="chip" onclick="setFilter('mahsulot')" data-f="mahsulot" type="button">Mahsulotlar</button>
+      <button class="chip" onclick="setFilter('tikish')" data-f="tikish" type="button">Tikish</button>
+      <button class="chip" onclick="setFilter('ustanovka')" data-f="ustanovka" type="button">O‘rnatish</button>
+    </div>
+    <div id="prod-list"></div>
+    <div class="empty" id="prod-empty" style="display:none">
+      <div class="empty-icon" style="display:flex;justify-content:center;color:var(--muted);"><svg width="34" height="34" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.5 5h13l3.5 7v7a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-7Z"></path></svg></div>
+      <p>Mahsulotlar yo'q.<br>Yuqoridagi tugmani bosing.</p>
+    </div>
+  </div>
+</section><section class="page" id="page-finance"><div class="section-intro report-heading"><h2>Hisobot</h2><div class="report-filter"><select aria-label="Hisobot davri" id="report-period" onchange="reportPeriod=this.value;renderMobileFinance()"><option value="day">Kunlik</option><option value="week">Haftalik</option><option value="month" selected>Oylik</option><option value="year">Yillik</option><option value="all">Barchasi</option></select></div></div><div class="finance-total"><span>Buyurtmalar summasi</span><strong id="finance-orders">0 so‘m</strong></div><div class="finance-grid"><div class="card"><span>To‘liq to‘langan buyurtmalar</span><strong id="finance-paid">0 so‘m</strong></div><div class="card"><span>Jami qarzdorlik</span><strong id="finance-debt">0 so‘m</strong></div></div><div class="section-title"><h2>Davrdagi buyurtmalar</h2></div><div id="finance-list"></div></section></main><!-- PAGE: MAHSULOTLAR -->
+<!-- PAGE: XIZMATLAR -->
+<!-- PAGE: HISOB -->
+<!-- PAGE: SAQLASH -->
+<!-- PAGE: TARIX -->
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav" aria-label="Asosiy bo‘limlar"><button class="nav-btn" id="nav-home" onclick="switchPage('home')" type="button"><span class="nav-icon"><svg class="icon" width="22" height="22" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"></path><path d="M3 8l9 5 9-5"></path><path d="M12 13v8"></path></svg></span><span class="nav-label">Asosiy</span></button><button class="nav-btn" id="nav-tarix" onclick="switchPage('tarix')" type="button"><span class="nav-icon"><svg class="icon" width="22" height="22" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><polyline points="12 9 12 13 15 15"></polyline><path d="M5 3 3 6"></path></svg></span><span class="nav-label">Buyurtmalar</span></button><button class="nav-btn" id="nav-catalog" onclick="switchPage('catalog')" type="button"><span class="nav-icon"><svg class="icon" width="22" height="22" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2.5"></circle><circle cx="6" cy="18" r="2.5"></circle><line x1="8.5" y1="7.5" x2="20" y2="19"></line><line x1="8.5" y1="16.5" x2="20" y2="5"></line></svg></span><span class="nav-label">Katalog</span></button><button class="nav-btn" id="nav-finance" onclick="switchPage('finance')" type="button"><span class="nav-icon"><svg class="icon" width="22" height="22" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="8" y1="10" x2="8" y2="10.01"></line><line x1="12" y1="10" x2="12" y2="10.01"></line><line x1="16" y1="10" x2="16" y2="14"></line><line x1="8" y1="14" x2="8" y2="14.01"></line><line x1="12" y1="14" x2="12" y2="14.01"></line><line x1="8" y1="18" x2="8" y2="18.01"></line><line x1="12" y1="18" x2="16" y2="18"></line></svg></span><span class="nav-label">Hisobot</span></button></nav>
+
+<!-- MARKAZIY TEZKOR AMALLAR -->
+<div class="quick-actions-ov" id="quick-actions-ov" onclick="closeQuickActions()"></div>
+<div class="quick-actions" id="quick-actions"><button type="button" onclick="closeQuickActions();switchPage('settings')">⚙ Sozlamalar</button>
+  <button onclick="qaNewClient()" type="button"><svg class="icon" width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"></path></svg><span>Yangi mijoz</span></button>
+  <button onclick="qaAddRoom()" type="button"><svg class="icon" width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"></path><path d="M3 8l9 5 9-5"></path><path d="M12 13v8"></path></svg><span>Xona qo'shish</span></button>
+  <button onclick="qaAddPhoto()" type="button"><svg class="icon" width="18" height="18" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg><span>Andoza yuklash</span></button>
+</div>
+
+<!-- MAXSUS TASDIQLASH OYNASI (confirm() o'rniga) -->
+<div class="confirm-ov" id="confirm-ov" role="dialog" aria-modal="true">
+  <div class="confirm-card">
+    <div class="confirm-icon" id="confirm-icon"></div>
+    <div class="confirm-msg" id="confirm-msg"></div>
+    <div class="confirm-actions">
+      <button class="confirm-btn confirm-cancel" id="confirm-cancel-btn" type="button">Bekor qilish</button>
+      <button class="confirm-btn confirm-ok" id="confirm-ok-btn" type="button">Tasdiqlash</button>
+    </div>
+  </div>
+</div>
+
+<!-- YUKLANISH OVERLAY (JPG tayyorlanayotganda) -->
+<div class="loading-ov" id="loading-ov">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loading-text">Tayyorlanmoqda...</div>
+</div>
+
+<!-- DRAWER: Mahsulotlar ro'yxati -->
+<div class="drawer-ov" id="drawer-ov" onclick="closeDrawer()" hidden="hidden"></div>
+<div class="drawer" id="drawer" hidden="hidden">
+  <div class="dw-head">
+    <span style="">📦</span>
+    <h2>Mahsulotlar ro'yxati</h2>
+    <button class="dw-close" onclick="closeDrawer()" type="button">✕</button>
+  </div>
+  </div>
+
+<!-- MODAL: Qo'shish/Tahrirlash -->
+<div class="modal-ov" id="add-modal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-title">Yangi mahsulot qo'shish</div>
+    <div class="form-row">
+      <label>Bo'lim tanlang</label>
+      <div class="chip-grp">
+        <button class="bolim-chip" id="chip-mahsulot" onclick="selectBolim('mahsulot')" type="button">Mahsulotlar</button>
+        <button class="bolim-chip" id="chip-tikish" onclick="selectBolim('tikish')" type="button">Tikish</button>
+        <button class="bolim-chip" id="chip-ustanovka" onclick="selectBolim('ustanovka')" type="button">O‘rnatish</button>
+      </div>
+    </div>
+    <div class="form-row">
+      <label for="prod-name-input">Mahsulot nomi</label>
+      <input type="text" class="fi" id="prod-name-input" placeholder="Masalan: Karniz 3m">
+    </div>
+    <div class="form-row">
+      <label for="prod-price-input">Narxi (so'm)</label>
+      <input type="text" class="fi" id="prod-price-input" placeholder="Masalan: 60 000" inputmode="decimal">
+    </div>
+    <div class="form-row">
+      <label for="prod-unit">O'lchov birligi</label>
+      <select class="fi" id="prod-unit">
+        <option value="m">Metr (m)</option>
+        <option value="dona">Dona</option>
+        <option value="juft">Juft</option>
+        <option value="m²">Metr kv (m²)</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="saveProduct()" style="display:flex;align-items:center;justify-content:center;gap:7px;" type="button"><svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11l3 3v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"></path><path d="M8 4v5h8V4"></path><rect x="7" y="13" width="10" height="7"></rect></svg> Saqlash</button>
+    <button class="btn-cancel" onclick="closeModal()" type="button">Bekor qilish</button>
+  </div>
+</div>
+
+<!-- RECEIPT AREA (hidden, for export) -->
+<div class="snack" id="snack" role="status"></div>
+
+<!-- ANDOZA RASM KO'RUVCHI (Tarix bo'limida rasmga bosilganda to'liq ekranda ochish uchun) -->
+<div class="img-viewer-ov" id="img-viewer-ov" onclick="closeImageViewer()">
+  <img id="img-viewer-img" src="" alt="Andoza">
+</div>
+
+<!-- html2canvas endi CDN emas, lokal fayldan yuklanadi (2-qadam: offline'da ham ishlashi uchun) -->
+<!-- Kirish devori (PIN) — boshqa modullardan oldin, tezroq ishga tushishi uchun -->
+<!-- Ilova modullari — tartib MUHIM: utils va state birinchi, main eng oxirida -->
+<div class="editor-dock" id="editor-dock" hidden><div><span>Jami hisob</span><strong id="dock-total">0 so‘m</strong></div><button id="editor-next" onclick="nextMobileStep()" type="button">Davom etish <span>→</span></button></div></div><div id="receipt-area"></div>
+
+<script src="js/pwa.js"></script><script src="js/startup.js"></script></body>
+</html>
