@@ -81,10 +81,23 @@
     const hint=document.getElementById('reminder-hint');if(hint)hint.textContent='Eslatmalarni Sozlamalar bo‘limidan taqvimga qo‘shishingiz mumkin.';
     window.requestMobileReminders=calendar;
     if('serviceWorker' in navigator){
-      try{registration=await navigator.serviceWorker.register('./sw.js');await navigator.serviceWorker.ready;document.getElementById('pwa-status').textContent='Offline ishlashga tayyor';}
+      try{registration=await navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'});await navigator.serviceWorker.ready;document.getElementById('pwa-status').textContent='Offline ishlashga tayyor';}
       catch(e){console.error(e);document.getElementById('pwa-status').textContent='Offline yuklash bajarilmadi. Internet bilan qayta oching.';}
     }
   }
+  // Ilova telefonda kunlab ochiq turishi mumkin. Uzoq vaqt (10 daqiqadan ko'p) orqa fonda
+  // turib qaytganda va foydalanuvchi bosh sahifada bo'lsa - eng yangi versiyani yuklaymiz.
+  // Qoralama localStorage'da saqlanadi, lekin buyurtma kiritilayotgan paytda baribir qayta yuklamaymiz.
+  (function(){
+    let hiddenAt=0;
+    document.addEventListener('visibilitychange',()=>{
+      if(document.visibilityState==='hidden'){hiddenAt=Date.now();return;}
+      registration?.update().catch(()=>{});
+      const onHome=typeof window.mobilePage==='undefined'||window.mobilePage==='home';
+      const overlayOpen=document.querySelector('.open, #pwa-dialog');
+      if(hiddenAt&&Date.now()-hiddenAt>10*60*1000&&onHome&&!overlayOpen&&navigator.onLine)location.reload();
+    });
+  })();
   window.PardaPWA={calendarText};
   window.NativeBridge={isNative:false,ready:Promise.resolve(),attach:()=>{attach().catch(console.error);},persist:()=>{},flush:async()=>{}};
 })();

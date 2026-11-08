@@ -15,6 +15,25 @@ Bu manzil deploy tasdiqlanmaguncha tayyor ilova manzili hisoblanmaydi.
 
 GitHub ko‘rsatmasi: https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
 
+## Narxlar va mahsulotlarni yangilash (hamma qurilmalar uchun)
+
+Standart mahsulotlar ro‘yxati repozitoriy ildizidagi **`Lobar-katalog.csv`** faylida (alfavit bo‘yicha). Bu fayl GitHub'da o‘zgarsa, ilovani ochgan har bir telefon/brauzerda narxlar avtomatik yangilanadi: ilova qayta ochilganda yoki orqa fondan qaytganda.
+
+**1-usul: ilova orqali (tavsiya etiladi)**
+1. Ilovada **Katalog** bo‘limiga kiring va narxlarni o‘zgartiring, mahsulot qo‘shing yoki o‘chiring.
+2. Yuqoridagi **eksport** tugmasini bosing. `Lobar-katalog.csv` fayli saqlanadi (telefon uni `Lobar-katalog (1).csv` deb saqlasa, yuklashdan oldin nomini aynan `Lobar-katalog.csv` qilib o‘zgartiring).
+3. GitHub'da repozitoriyni oching, **Add file → Upload files** orqali shu faylni yuklang va **Commit changes** ni bosing. Eski fayl yangisi bilan almashtiriladi.
+
+**2-usul: GitHub'da to‘g‘ridan-to‘g‘ri**
+`Lobar-katalog.csv` faylini oching, ✏️ (Edit) tugmasini bosing, narxni o‘zgartiring va **Commit changes** ni bosing. Format: `"ID";"Nomi";"Bolim";"Narx";"Birlik"`.
+- `Bolim` qiymati faqat `mahsulot`, `tikish` yoki `ustanovka` bo‘lishi mumkin.
+- Yangi mahsulotga boshqalarda **takrorlanmaydigan** yangi raqamli ID bering. Mavjud mahsulotning ID raqamini o‘zgartirmang.
+- Narx bo‘sh joy va “so‘m” so‘zisiz yoziladi: `50000`.
+
+Faylda yo‘q, xodim o‘z telefonida qo‘shgan mahsulotlar saqlanib qoladi. Fayldan o‘chirilgan standart mahsulot esa hammadan o‘chadi.
+
+**Ilova kodining yangilanishi:** service worker endi “avval tarmoq” rejimida ishlaydi. GitHub'ga yuklangan har qanday o‘zgarish ilova keyingi ochilganda hammaga yetib boradi; `sw.js`dagi versiyani qo‘lda o‘zgartirish kerak emas. Internet bo‘lmasa, oxirgi saqlangan nusxa ishlaydi. GitHub Pages nashri odatda commit'dan keyin 1–2 daqiqa davom etadi.
+
 ## O‘rnatish
 
 - Android: Chrome orqali manzilni oching → menyu → Ilovani o‘rnatish / Bosh ekranga qo‘shish.
@@ -47,7 +66,7 @@ Brauzer sayti ma’lumotlarini tozalash buyurtmalarni o‘chiradi. Rasmlar ko‘
 `node scripts/build-pwa.mjs` → `dist-pwa/`.
 `node scripts/verify.mjs` va `node scripts/pwa-test.mjs`.
 Tayyor `dist-pwa/` mazmunini GitHub ildiziga yuklang.
-Kesh versiyasi fayllardan avtomatik hisoblanadi. Yangi versiya tayyor bo‘lgach ilovaning barcha oynalarini yopib qayta oching. Yangilanish qoralama yozilayotgan paytda sahifani majburan qayta yuklamaydi va buyurtma xotirasini tozalamaydi.
+Yangilanish internet bo‘lganda keyingi ochilishda avtomatik qo‘llanadi. Qoralama yozilayotgan paytda sahifa majburan qayta yuklanmaydi va buyurtma xotirasi tozalanmaydi.
 
 Mahalliy sinov: `python -m http.server 8782 --directory dist-pwa`, so‘ng `http://localhost:8782`. Telefonda oddiy HTTP LAN manzili to‘liq PWA sinovi o‘rnini bosmaydi; HTTPS Pages manzilidan foydalaning.
 
