@@ -23,9 +23,9 @@ function sanitizeMacros(list){
     var items=(Array.isArray(s.items)?s.items:[]).filter(function(i){
       if(!i||typeof i!=='object')return false;
       var id=Number(i.prodId),key=String(i.name||'').trim();
-      if(!(Number.isSafeInteger(id)&&id>0)||!key||seen[key])return false;
+      if(!key||seen[key])return false;
       seen[key]=true;return true;
-    }).map(function(i){return {prodId:Number(i.prodId),name:String(i.name).trim()};});
+    }).map(function(i){var id=Number(i.prodId);return {prodId:Number.isSafeInteger(id)&&id>0?id:0,name:String(i.name).trim()};});
     var name=String(s.name==null?'':s.name).trim().slice(0,40);
     return {id:d.id, name:name||d.name, items:items};
   });
@@ -132,4 +132,72 @@ function renameMacro(id,val){
   if(macroChanged())showSnack('✅ Makros nomi saqlandi: '+m.name);
 }
 
+// ---- HAMMAGA TARQATISH: Lobar-makroslar.csv ----
+// Egasi Sozlamalar → Makroslar → "Eksport" orqali faylni olib, GitHub'ga yuklaydi.
+// Har bir telefon ilova ochilganda (va orqa fondan qaytganda) faylni tekshiradi;
+// fayl o'zgargan bo'lsa, makroslar shu fayl bo'yicha yangilanadi.
+// Fayl hali yuklanmagan bo'lsa (404) - telefondagi makroslar o'zgarmaydi.
+var MACROS_FILE='Lobar-makroslar.csv';
+var MACROS_HEADER=['Makros','Tugma nomi','Mahsulot'];
+
+function macrosCSV(){
+  function cell(v){v=String(v==null?'':v);if(/^[=+@-]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"';}
+  var rows=[MACROS_HEADER];
+  macros.forEach(function(m){
+    if(!m.items.length){rows.push([m.id,m.name,'']);return;}
+    m.items.forEach(function(item){var p=macroProduct(item);rows.push([m.id,m.name,p?p.name:item.name]);});
+  });
+  return '﻿'+rows.map(function(r){return r.map(cell).join(';');}).join('\r\n')+'\r\n';
+}
+function parseMacrosCSV(text){
+  var rows=parseCSVRows(text);
+  if(!rows.length||rows.shift().map(function(v){return v.trim();}).join('|')!==MACROS_HEADER.join('|'))
+    throw new Error('Ustunlar: '+MACROS_HEADER.join(';'));
+  var found={};
+  rows.forEach(function(r,i){
+    r=r.map(function(v){return String(v||'').trim().replace(/^'(?=[=+@-])/,'');});
+    var key=r[0].toLocaleLowerCase();
+    var def=MACRO_DEFAULTS.find(function(d){return d.id===key||d.name.toLocaleLowerCase()===key;});
+    if(!def)throw new Error((i+2)+'-qator: makros “'+r[0]+'” noma’lum (baget yoki potolok bo‘lishi kerak)');
+    var m=found[def.id]||(found[def.id]={id:def.id,name:'',items:[]});
+    if(!m.name&&r[1])m.name=r[1];
+    if(r[2]){
+      var p=products.find(function(x){return x.bolim==='mahsulot'&&x.name===r[2];});
+      m.items.push({prodId:p?p.id:0,name:r[2]});
+    }
+  });
+  return found;
+}
+function syncSharedMacros(text){
+  if(typeof text!=='string'||!text.trim())return false;
+  var hash=catalogHash(text);
+  if(safeGetLS('parda_macros_hash',null)===hash)return false;
+  var found;
+  try{found=parseMacrosCSV(text);}
+  catch(err){console.error(MACROS_FILE+' faylida xato:',err);return false;}
+  var next=sanitizeMacros(macros.map(function(m){return found[m.id]||m;}));
+  var before=macros;macros=next;
+  if(!saveMacros()){macros=before;return false;}
+  safeSetLS('parda_macros_hash',hash);
+  renderMacroButtons();
+  if(window.settingsSection==='macros')renderMacroSettings();
+  return true;
+}
+function fetchSharedMacros(){
+  return fetch(MACROS_FILE,{cache:'no-cache'}).then(function(r){return r.ok?r.text():null;}).catch(function(){return null;});
+}
+function exportMacros(){
+  var url=URL.createObjectURL(new Blob([macrosCSV()],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');
+  a.href=url;a.download=MACROS_FILE;a.click();setTimeout(function(){URL.revokeObjectURL(url);},4000);
+}
+
 renderMacroButtons();
+fetchSharedMacros().then(syncSharedMacros);
+(function(){
+  var last=Date.now();
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState!=='visible'||Date.now()-last<60000)return;
+    last=Date.now();
+    fetchSharedMacros().then(function(text){if(syncSharedMacros(text))showSnack('🔄 Makroslar yangilandi');});
+  });
+})();

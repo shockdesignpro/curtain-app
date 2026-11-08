@@ -82,3 +82,13 @@ function showSnack(msg){
   clearTimeout(showSnack._t);
   showSnack._t = setTimeout(function(){ s.classList.remove('show'); },2400);
 }
+
+// ---- CSV O'QISH (katalog va makroslar fayllari uchun umumiy) ----
+// Ajratuvchi birinchi qatorga qarab tanlanadi (';' yoki ','), qo'shtirnoq ichidagi
+// ajratuvchi va yangi qatorlar hisobga olinadi, bo'sh qatorlar tashlab yuboriladi.
+function parseCSVRows(text){
+ text=text.replace(/^\ufeff/,'');var delimiter=text.split(/\r?\n/)[0].includes(';')?';':',',rows=[],row=[],value='',quoted=false;
+ for(var i=0;i<text.length;i++){var c=text[i];if(c==='"'){if(quoted&&text[i+1]==='"'){value+='"';i++;}else quoted=!quoted;}else if(!quoted&&(c===delimiter||c==='\n'||c==='\r')){row.push(value);value='';if(c!==delimiter){if(c==='\r'&&text[i+1]==='\n')i++;if(row.some(function(v){return v.trim();}))rows.push(row);row=[];}}else value+=c;}
+ if(quoted)throw new Error('CSV qo‘shtirnoqlari yopilmagan');row.push(value);if(row.some(function(v){return v.trim();}))rows.push(row);
+ return rows;
+}

@@ -67,6 +67,7 @@
   async function attach(){
     window.downloadJpgFromReceipt=receipt;
     const base=window.exportJPG;window.exportJPG=()=>{if(!busy)return base();};
+    window.exportMacros=()=>fileActions(new File([window.macrosCSV()],'Lobar-makroslar.csv',{type:'text/csv;charset=utf-8'}),'Makroslarni eksport qilish');
     window.exportCatalog=()=>fileActions(new File([window.catalogCSV()],'Lobar-katalog.csv',{type:'text/csv;charset=utf-8'}),'Katalogni eksport qilish');
     window.exportBackup=()=>{
       const data={app:'parda_kalkulyatori',version:2,exportedAt:new Date().toISOString(),orders:window.orders,products:window.products,rooms:window.rooms,andoza:window.andozaImages,client:window.clientData,usage:window.productUsage,calc:window.calcRows,macros:window.macros};

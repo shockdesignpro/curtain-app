@@ -136,9 +136,7 @@ function catalogCSV(){
  return '\ufeff'+[['ID','Nomi','Bolim','Narx','Birlik']].concat(products.slice().sort(productAlphabetical).map(function(p){return [p.id,p.name,p.bolim,p.price,p.unit];})).map(function(r){return r.map(cell).join(';');}).join('\r\n');
 }
 function parseCatalogCSV(text){
- text=text.replace(/^\ufeff/,'');var delimiter=text.split(/\r?\n/)[0].includes(';')?';':',',rows=[],row=[],value='',quoted=false;
- for(var i=0;i<text.length;i++){var c=text[i];if(c==='"'){if(quoted&&text[i+1]==='"'){value+='"';i++;}else quoted=!quoted;}else if(!quoted&&(c===delimiter||c==='\n'||c==='\r')){row.push(value);value='';if(c!==delimiter){if(c==='\r'&&text[i+1]==='\n')i++;if(row.some(function(v){return v.trim();}))rows.push(row);row=[];}}else value+=c;}
- if(quoted)throw new Error('CSV qo‘shtirnoqlari yopilmagan');row.push(value);if(row.some(function(v){return v.trim();}))rows.push(row);
+ var rows=parseCSVRows(text);
  if(!rows.length||rows.shift().join('|')!=='ID|Nomi|Bolim|Narx|Birlik')throw new Error('Ustunlar: ID;Nomi;Bolim;Narx;Birlik');
  var seen={};return rows.map(function(r,i){
   if(r.length!==5)throw new Error((i+2)+'-qator: 5 ta ustun kerak');

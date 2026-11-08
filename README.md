@@ -35,6 +35,18 @@ Faylda yo‘q, xodim o‘z telefonida qo‘shgan mahsulotlar saqlanib qoladi. Fa
 
 **Ilova kodining yangilanishi:** service worker endi “avval tarmoq” rejimida ishlaydi. GitHub'ga yuklangan har qanday o‘zgarish ilova keyingi ochilganda hammaga yetib boradi; `sw.js`dagi versiyani qo‘lda o‘zgartirish kerak emas. Internet bo‘lmasa, oxirgi saqlangan nusxa ishlaydi. GitHub Pages nashri odatda commit'dan keyin 1–2 daqiqa davom etadi.
 
+## Makroslarni hammaga tarqatish (Baget, Potolok karniz)
+
+Makroslar — “Xarajatlar” bo‘limidagi tugmalar. Bitta tugma bir bosishda bir nechta mahsulotni qo‘shadi. Ular repozitoriy ildizidagi **`Lobar-makroslar.csv`** fayli orqali hamma telefonlarga tarqatiladi:
+
+1. Ilovada **Sozlamalar → Makroslar** bo‘limiga kiring. Tugma nomini o‘zgartiring, mahsulotlarni biriktiring yoki olib tashlang.
+2. Shu sahifadagi **“Makroslarni eksport qilish”** tugmasini bosing. `Lobar-makroslar.csv` fayli saqlanadi.
+3. GitHub'da **Add file → Upload files** orqali shu faylni yuklang va **Commit changes** ni bosing.
+
+Ilova keyingi ochilganda yoki orqa fondan qaytganda makroslar hammada yangilanadi. Fayl GitHub'da bo‘lmasa, har bir telefon o‘z makroslaridan foydalanadi.
+
+Faylni GitHub'da qo‘lda ham tahrirlash mumkin. Format: `"Makros";"Tugma nomi";"Mahsulot"`. `Makros` ustuniga `baget` yoki `potolok` yoziladi. Har bir mahsulot alohida qatorda turadi va uning nomi katalogdagi nom bilan **aynan bir xil** bo‘lishi kerak. Mahsulotsiz makros uchun `Mahsulot` ustunini bo‘sh qoldiring.
+
 ## O‘rnatish
 
 - Android: Chrome orqali manzilni oching → menyu → Ilovani o‘rnatish / Bosh ekranga qo‘shish.

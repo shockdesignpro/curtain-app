@@ -289,3 +289,6 @@
 #mobile-shell .macro-add{display:flex;gap:8px;margin-top:10px;align-items:stretch}
 #mobile-shell .macro-add select{flex:1;min-width:0;height:46px;min-height:46px!important;font-size:14px;padding:8px 10px}
 #mobile-shell .macro-add .add-row-btn{width:auto;flex-shrink:0;height:46px;min-height:46px;margin:0;padding:8px 14px}
+#mobile-shell .macro-share h3{margin:0 0 4px;font-size:15px}
+#mobile-shell .macro-share code{font-size:12px;background:var(--teal-light);padding:1px 5px;border-radius:5px}
+#mobile-shell .macro-share .add-row-btn{margin-top:10px}
