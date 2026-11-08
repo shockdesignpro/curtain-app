@@ -18,7 +18,7 @@ function buildReceiptHtmlBase(data){
       return '<div class="rcpt-row">'
         +'<span class="rcpt-name">'+esc(row.name)+'</span>'
         +'<span class="rcpt-price">'+fmtN(row.price)+'</span>'
-        +'<span class="rcpt-mq">×'+row.miqdor+'</span>'
+        +'<span class="rcpt-mq">×'+esc(row.miqdor)+'</span>'
         +'<span class="rcpt-sum">'+fmtN(row.sum)+'</span>'
         +'</div>';
     }).join('');
@@ -48,7 +48,7 @@ function buildReceiptHtmlBase(data){
       +body
     +'</div>';
   }
-  var rows=data.rows||{mahsulot:[],tikish:[],ustanovka:[]};
+  var rawRows=data.rows||{},rows={mahsulot:rawRows.mahsulot||[],tikish:rawRows.tikish||[],ustanovka:rawRows.ustanovka||[]};
   return '<div class="rcpt-header">'
       +'<div class="rcpt-title">🧵 Parda kalkulyatori</div>'
       +'<div class="rcpt-sub">ID: '+esc(data.receiptNumber||'—')+' · '+esc(data.date?receiptDateTime(data.date):data.dateStr||'')+'</div>'
@@ -236,7 +236,7 @@ function exportJPG(){
       return {
         id:r.id, nomi: r.nomi,
         pardalar: r.pardalar.map(function(p){
-          return {id:p.id,tur:p.tur||'deraza', boyi:p.boyi, eni:p.eni, karniz:p.karniz, rang:p.rang};
+          return {id:p.id,tur:p.tur||'deraza', boyi:p.boyi, eni:p.eni, karniz:p.karniz, rang:p.rang, autoOff:p.autoOff};
         })
       };
     });
@@ -260,23 +260,23 @@ function exportJPG(){
 
   var andozaSnapshot=andozaImages.map(function(a){return {src:a.src, caption:a.caption||''};});
   var wasEdit=false;
+  // Xotiraga yozilmasa, o'zgarishni orqaga qaytarish uchun eski ro'yxat nusxasi.
+  var ordersBefore=orders.slice();
 
   if(orderEditId){
     // TAHRIRLASH REJIMI: yangi buyurtma qo'shmaymiz - mavjudini yangilaymiz,
     // shu bilan dublikat bo'lib saqlanib qolishining oldi olinadi.
     // id, yaratilgan sana (date/dateStr) va to'lovlar (payments), status - o'zgarmasdan saqlanadi.
-    var existing=orders.find(function(o){return o.id===orderEditId;});
-    if(existing){
-      existing.ism=ism; existing.manzil=manzil; existing.tel=tel; existing.tayyorSana=tayyorSana;
-      existing.rooms=rcptData.rooms; existing.rows=rcptData.rows; existing.andoza=andozaSnapshot;
-      existing.mS=mS; existing.tS=tS; existing.uS=uS; existing.xizmat=xizmat; existing.grand=grand;
-      existing.editedAt=now.getTime();
-      existing.editedDateStr=dateStr;
+    var existingIdx=orders.findIndex(function(o){return o.id===orderEditId;});
+    if(existingIdx!==-1){
+      orders[existingIdx]=Object.assign({},orders[existingIdx],{
+        ism:ism, manzil:manzil, tel:tel, tayyorSana:tayyorSana,
+        rooms:rcptData.rooms, rows:rcptData.rows, andoza:andozaSnapshot,
+        mS:mS, tS:tS, uS:uS, xizmat:xizmat, grand:grand,
+        editedAt:now.getTime(), editedDateStr:dateStr
+      });
       wasEdit=true;
     }
-    orderEditId=null;
-    hideEditBanner();
-    renderSaqlash();
   }
   if(!wasEdit){
     orders.unshift({
@@ -295,7 +295,19 @@ function exportJPG(){
       mS:mS, tS:tS, uS:uS, xizmat:xizmat, grand:grand
     });
   }
-  saveOrders();
+  if(!saveOrders()){
+    // Buyurtma xotiraga yozilmadi - "saqlandi" deb aldamaymiz, holatni qaytaramiz.
+    orders=ordersBefore;
+    showSnack("⚠️ Buyurtma saqlanmadi: telefon xotirasi to'lgan. Zaxira olib, eski buyurtmalar yoki rasmlarni o'chiring.");
+    return;
+  }
+  // Chek rasmi tayyorlanmay qolsa ham, qayta bosilganda YANGI buyurtma (dublikat) yaratilmasin:
+  // muvaffaqiyatli yakungacha shu buyurtma tahrir rejimida qoladi.
+  // (Muvaffaqiyatda completeMobileReceipt -> resetAllData orderEditId ni tozalaydi.)
+  orderEditId=receiptId;
+  safeSetLS('parda_draft_meta',{step:'hisob',orderId:receiptId});
+  showEditBanner(ism);
+  renderSaqlash();
   saveUsage();
   renderQuickAdd('mahsulot');renderQuickAdd('tikish');renderQuickAdd('ustanovka');
 

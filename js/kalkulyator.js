@@ -20,6 +20,14 @@ function quickAddRow(type,prodId){
   showSnack('✅ '+prod.name+" qo'shildi");
 }
 function removeCalcRow(type,id){
+  var removed=calcRows[type].find(function(r){return r.id===id;});
+  if(removed&&removed.linkParda!=null){
+    // "Eni"dan avtomatik yaratilgan qator o'chirildi - keyingi o'zgarishda qayta yaratilmasin.
+    rooms.forEach(function(room){(room.pardalar||[]).forEach(function(p){
+      if(String(p.id)===String(removed.linkParda)){p.autoOff=p.autoOff||{};p.autoOff[type]=true;}
+    });});
+    saveRooms();
+  }
   calcRows[type]=calcRows[type].filter(function(r){return r.id!==id;});
   saveCalc();renderSection(type);recalc();
 }
@@ -51,10 +59,14 @@ function renderSection(type){
     return;
   }
   cont.innerHTML=calcRows[type].filter(isCurrentCostRow).map(function(row){
-    var opts=prods.map(function(p){
+    var known=prods.some(function(p){return p.id===row.prodId;});
+    // Mahsulot o'chirilgan yoki boshqa bo'limga ko'chirilgan bo'lsa, ro'yxatdagi birinchisini
+    // "tanlangandek" ko'rsatmaymiz - foydalanuvchi qaytadan tanlashi kerakligini aniq bildiramiz.
+    var opts=(known?'':'<option value="" selected disabled>⚠️ Mahsulot topilmadi — tanlang</option>')
+      +prods.map(function(p){
       return '<option value="'+p.id+'"'+(p.id===row.prodId?' selected':'')+'>'+esc(p.name)+'</option>';
     }).join('');
-    var prod=prods.find(function(p){return p.id===row.prodId;})||prods[0];
+    var prod=products.find(function(p){return p.id===row.prodId;})||{unit:''};
     var price=costRowPrice(row);
     var sum=row.miqdor*price;
     var key=type+'-'+row.id;
@@ -68,7 +80,7 @@ function renderSection(type){
         +' oninput="onPrice(\''+type+'\','+row.id+',this.value,this)"'
         +' onblur="finishCalcInput(\''+type+'\','+row.id+',\'price\',this)"/></label>'
       +'<label for="quantity-'+key+'"><span class="field-label">Miqdor · '+esc(prod.unit)+'</span>'
-      +'<input id="quantity-'+key+'" class="mq-input" type="text" inputmode="decimal" autocomplete="off" value="'+row.miqdor+'"'
+      +'<input id="quantity-'+key+'" class="mq-input" type="text" inputmode="decimal" autocomplete="off" value="'+esc(row.miqdor)+'"'
         +' oninput="onMq(\''+type+'\','+row.id+',this.value,this)"'
         +' onblur="finishCalcInput(\''+type+'\','+row.id+',\'quantity\',this)"/></label></div>'
       +'<div class="calc-total"><span>Summa</span><output class="row-sum" for="price-'+key+' quantity-'+key+'">'+fmtN(sum)+'</output></div>'
@@ -174,8 +186,8 @@ function renderDetailSummary(){
   types.forEach(function(type){
     var card=document.getElementById('summary-'+type+'-detail');
     var det=document.getElementById('detail-'+type);
-    if(rooms.length){card.style.display='none';return;}
     if(!card||!det)return;
+    if(rooms.length){card.style.display='none';return;}
     var rows=calcRows[type];
     if(!rows.length){card.style.display='none';return;}
     card.style.display='block';
@@ -187,7 +199,7 @@ function renderDetailSummary(){
       return '<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:14px;">'
         +'<span style="flex:1;color:var(--text);">'+esc(name)+'</span>'
         +'<span style="color:var(--muted);width:64px;text-align:center;">'+fmtN(price)+'</span>'
-        +'<span style="color:var(--muted);width:40px;text-align:center;">×'+row.miqdor+'</span>'
+        +'<span style="color:var(--muted);width:40px;text-align:center;">×'+esc(row.miqdor)+'</span>'
         +'<span style="font-weight:800;width:78px;text-align:right;">'+fmtN(sum)+'</span>'
         +'</div>';
     }).join('')

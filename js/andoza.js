@@ -107,7 +107,7 @@ function renderAndoza(){
   if(!andozaImages.length){grid.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
   grid.innerHTML=andozaImages.map(function(a,idx){
-    return '<div class="sample-tile"><div class="sample-photo"><img src="'+a.src+'" alt="'+esc(a.caption||('Andoza '+(idx+1)))+'"/>'
+    return '<div class="sample-tile"><div class="sample-photo"><img src="'+esc(safeImgSrc(a.src))+'" alt=""'+esc(a.caption||('Andoza '+(idx+1)))+'"/>'
       +'<button aria-label="Andozani olib tashlash" onclick="removeAndoza('+idx+')">'+icon('close',14)+'</button></div>'
       +'<input type="text" aria-label="Andoza izohi" value="'+esc(a.caption||'')+'" placeholder="Izoh yozing" onchange="setAndozaCaption('+idx+',this.value)"/></div>';
   }).join('');
