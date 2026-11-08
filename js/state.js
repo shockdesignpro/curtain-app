@@ -95,7 +95,7 @@ if(products === null){
     {id:22,name:'Ust. Karniz 1',bolim:'ustanovka',price:50000,unit:'m'},
     {id:23,name:'Ust. Karniz 2',bolim:'ustanovka',price:50000,unit:'m'},
     {id:24,name:'Ust. Karniz 3',bolim:'ustanovka',price:50000,unit:'m'},
-    {id:25,name:'Ust. Karniz 4',bolim:'ustanovka',price:50000,unit:'m'}
+    {id:25,name:'Ust. Karniz 4',bolim:'ustanovka',price:50000,unit:'m'},
     {id:26,name:'Korset',bolim:'mahsulot',price:4000,unit:'m'},
     {id:27,name:'Kolso',bolim:'mahsulot',price:1000,unit:'dona'},
     {id:28,name:'Kolechka',bolim:'mahsulot',price:1500,unit:'dona'},
