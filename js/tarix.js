@@ -56,7 +56,7 @@ function renderReadySoon(){
   var dayAfter=new Date(today.getTime()+2*86400000);
   var items=orders.filter(function(o){
     if(!o.tayyorSana)return false;
-    if(orderStepsDone(o)>=ORDER_STEPS.length)return false; // to'liq tayyor bo'lganlar bezovta qilmasin
+    if((o.status&&o.status.parda_ornatish)||orderStepsDone(o)>=ORDER_STEPS.length)return false; // o'rnatilganlar bezovta qilmasin
     var d=new Date(o.tayyorSana);
     var dOnly=new Date(d.getFullYear(),d.getMonth(),d.getDate());
     return dOnly.getTime()>=today.getTime() && dOnly.getTime()<dayAfter.getTime();
@@ -68,7 +68,7 @@ function renderReadySoon(){
     var dOnly=new Date(d.getFullYear(),d.getMonth(),d.getDate());
     var isToday=dOnly.getTime()===today.getTime();
     return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;cursor:pointer;" '
-      +'onclick="tarixOpenId=\''+o.id+'\';renderTarix();document.getElementById(\'tarix-search\').scrollIntoView({behavior:\'smooth\'});">'
+      +'onclick="tarixOpenId='+esc(JSON.stringify(o.id))+';renderTarix();document.getElementById(\'tarix-search\').scrollIntoView({behavior:\'smooth\'});">'
       +'<span>'+(isToday?'🔴 Bugun':'🟠 Ertaga')+' — '+esc(o.ism)+'</span>'
       +'<span style="color:var(--muted);">'+esc(o.tel)+'</span>'
     +'</div>';
@@ -118,11 +118,11 @@ function buildStepsHtml(o){
     var nameField='';
     if(s.hasName && checked){
       nameField='<input type="text" placeholder="Tikuvchi ismi" value="'+esc(o.tikuvchiIsmi||'')+'" '
-        +'onclick="event.stopPropagation();" onchange="setTikuvchiIsm(\''+o.id+'\',this.value)" '
+        +'onclick="event.stopPropagation();" onchange="setTikuvchiIsm('+esc(JSON.stringify(o.id))+',this.value)" '
         +'style="margin-left:28px;margin-top:4px;padding:6px 9px;font-size:13px;border:1.5px solid var(--border);border-radius:7px;font-family:var(--font);box-sizing:border-box;width:calc(100% - 28px);"/>';
     }
     return '<div style="padding:3px 0;">'
-      +'<div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="event.stopPropagation();toggleOrderStep(\''+o.id+'\',\''+s.key+'\')">'
+      +'<div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="event.stopPropagation();toggleOrderStep('+esc(JSON.stringify(o.id))+',\''+s.key+'\')">'
         +'<span style="width:18px;height:18px;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;'
           +(checked?'background:var(--teal-mid);color:#fff;':'background:var(--card);border:1.5px solid var(--border);')+'">'+(checked?'✓':'')+'</span>'
         +'<span style="font-size:13px;'+(checked?'color:var(--text);font-weight:700;':'color:var(--muted);')+'">'+esc(s.label)+'</span>'
@@ -160,10 +160,15 @@ function addPayment(id){
 }
 function removePayment(id,idx){
   var o=orders.find(function(x){return x.id===id;});
-  if(!o||!o.payments)return;
-  o.payments.splice(idx,1);
-  saveOrders();
-  renderTarix();
+  if(!o||!o.payments||!o.payments[idx])return;
+  showConfirm(fmt(o.payments[idx].amount)+" miqdoridagi to'lov yozuvini o'chiramizmi?", {danger:true, okText:"O'chirish"}).then(function(ok){
+    if(!ok)return;
+    var cur=orders.find(function(x){return x.id===id;});
+    if(!cur||!cur.payments)return;
+    cur.payments.splice(idx,1);
+    saveOrders();
+    renderTarix();
+  });
 }
 
 function renderTarix(){
@@ -215,10 +220,11 @@ function renderTarix(){
       detailHtml+='<div style="font-size:13px;font-weight:800;color:var(--purple);margin:8px 0 4px;">🖼️ Andozalar</div>'
         +'<div style="display:flex;flex-wrap:wrap;gap:8px;">'
         +o.andoza.map(function(a){
-          var src=(typeof a==='string')?a:a.src;
+          var src=safeImgSrc((typeof a==='string')?a:a&&a.src);
+          if(!src)return '';
           var caption=(typeof a==='string')?'':(a.caption||'');
           return '<div style="width:56px;">'
-            +'<img src="'+src+'" onclick="event.stopPropagation();openImageViewer(\''+src+'\')" style="width:56px;height:56px;object-fit:cover;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;"/>'
+            +'<img src="'+esc(src)+'" alt="Andoza" onclick="event.stopPropagation();openImageViewer(this.src)" style="width:56px;height:56px;object-fit:cover;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;"/>'
             +(caption?'<div style="font-size:13px;color:var(--muted);text-align:center;margin-top:2px;word-break:break-word;">'+esc(caption)+'</div>':'')
           +'</div>';
         }).join('')
@@ -241,7 +247,7 @@ function renderTarix(){
       return '<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:13px;">'
         +'<span style="color:var(--muted);">'+esc(p.dateStr)+'</span>'
         +'<span style="font-weight:700;color:var(--text);">'+fmt(p.amount)+'</span>'
-        +'<button onclick="event.stopPropagation();removePayment(\''+o.id+'\','+idx+')" style="background:none;border:none;color:var(--red);font-size:13px;cursor:pointer;padding:2px 6px;">✕</button>'
+        +'<button onclick="event.stopPropagation();removePayment('+esc(JSON.stringify(o.id))+','+idx+')" style="background:none;border:none;color:var(--red);font-size:13px;cursor:pointer;padding:2px 6px;">✕</button>'
       +'</div>';
     }).join('');
     var paySection='<div style="margin-top:8px;padding:10px;border-radius:10px;background:'+statusInfo.bg+';">'
@@ -253,8 +259,8 @@ function renderTarix(){
       +(payHistory?'<div style="margin-top:6px;border-top:1px solid rgba(0,0,0,.08);padding-top:4px;">'+payHistory+'</div>':'')
       +(remain>0?
         '<div style="display:flex;gap:6px;margin-top:8px;">'
-          +'<input type="text" inputmode="decimal" id="pay-input-'+o.id+'" placeholder="Summa" onclick="event.stopPropagation();" style="flex:1;min-width:0;padding:7px 9px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font);box-sizing:border-box;"/>'
-          +'<button onclick="event.stopPropagation();addPayment(\''+o.id+'\')" style="background:var(--teal);color:#fff;border:none;border-radius:8px;padding:0 14px;font-size:13px;font-weight:800;cursor:pointer;">➕ Qo\'shish</button>'
+          +'<input type="text" inputmode="decimal" id="pay-input-'+esc(o.id)+'" placeholder="Summa" onclick="event.stopPropagation();" style="flex:1;min-width:0;padding:7px 9px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font);box-sizing:border-box;"/>'
+          +'<button onclick="event.stopPropagation();addPayment('+esc(JSON.stringify(o.id))+')" style="background:var(--teal);color:#fff;border:none;border-radius:8px;padding:0 14px;font-size:13px;font-weight:800;cursor:pointer;">➕ Qo\'shish</button>'
         +'</div>'
       :'')
     +'</div>';
@@ -314,7 +320,7 @@ function loadOrderForEdit(id){
       nomi:r.nomi,
       pardalar:(r.pardalar||[]).map(function(p){
         var newPardaId=++pardaCnt;if(p.id!=null)pardaMap[String(p.id)]=newPardaId;
-        return {id:newPardaId, tur:p.tur||'deraza', boyi:p.boyi||'', eni:p.eni||'', karniz:p.karniz||'Truba', rang:p.rang||'Oq'};
+        return {id:newPardaId, tur:p.tur||'deraza', boyi:p.boyi||'', eni:p.eni||'', karniz:p.karniz||'Truba', rang:p.rang||'Oq', autoOff:p.autoOff};
       })
     };
   });
@@ -333,7 +339,8 @@ function loadOrderForEdit(id){
     ((o.rows&&o.rows[type])||[]).forEach(function(row){
       var prod=null;
       if(row.prodId) prod=products.find(function(p){return p.id===row.prodId;});
-      if(!prod) prod=products.find(function(p){return p.bolim===type&&p.name===row.name;});
+      if(!prod) prod=products.find(function(p){return p.bolim===type&&p.name===row.name&&Number(p.price)===Number(row.price);})
+        ||products.find(function(p){return p.bolim===type&&p.name===row.name;});
       if(prod){
         calcRows[type].push({id:++rowCnt,prodId:prod.id,miqdor:row.miqdor,price:row.price,roomId:roomMap[String(row.roomId)]||null,costPardaId:pardaMap[String(row.costPardaId)],linkParda:pardaMap[String(row.linkParda)],autoSync:row.autoSync});
       } else {
@@ -384,7 +391,7 @@ function deleteTarixItem(id){
   if(focusedMobileOrderId===id)focusedMobileOrderId=null;
   orders=orders.filter(function(o){return o.id!==id;});
   saveOrders();renderTarix();
-  showUndoSnack("🗑️ \""+esc(removed.ism||'Buyurtma')+"\" o'chirildi", function(){
+  showUndoSnack("🗑️ \""+(removed.ism||'Buyurtma')+"\" o'chirildi", function(){
     orders.splice(Math.min(idx,orders.length),0,removed);
     saveOrders();renderTarix();
     showSnack('↩️ Tiklandi');

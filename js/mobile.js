@@ -52,7 +52,7 @@ function renderMobileHome(){
 function renderMobileFinance(){
   var selected=reportOrders(orders,reportPeriod,new Date());
   var debt=0,paid=0,total=0;
-  selected.forEach(function(o){debt+=mobileRemaining(o);total+=o.grand||0;if(orderStatus(o)==='full')paid+=o.grand||0;});
+  selected.forEach(function(o){debt+=mobileRemaining(o);total+=o.grand||0;paid+=Math.min(orderPaidSum(o),o.grand||0);});
   document.getElementById('finance-debt').textContent=fmt(debt);document.getElementById('finance-paid').textContent=fmt(paid);document.getElementById('finance-orders').textContent=fmt(total);
   document.getElementById('finance-list').innerHTML=selected.length?selected.map(function(o){return mobileCompactOrder(o,true);}).join(''):mobileEmpty('Buyurtmalar yo‘q','Tanlangan davrda buyurtma topilmadi.');
 }
@@ -171,7 +171,7 @@ function mobileBack(){
   var resetBase=resetAllData;resetAllData=function(){resetBase();localStorage.removeItem('parda_draft_meta');refreshMobile();if(window.NativeBridge)NativeBridge.persist();};
   // Preserve filtering, details, payments, production steps and all existing actions.
   document.addEventListener('keydown',function(e){if(e.key==='Escape')mobileBack();});
-  try{var meta=JSON.parse(localStorage.getItem('parda_draft_meta')||'{}');if(meta.orderId&&orders.some(function(o){return o.id===meta.orderId;}))orderEditId=meta.orderId;}catch(e){}
+  try{var meta=JSON.parse(localStorage.getItem('parda_draft_meta')||'{}');var editOrder=meta.orderId&&orders.find(function(o){return o.id===meta.orderId;});if(editOrder){orderEditId=meta.orderId;showEditBanner(editOrder.ism);}}catch(e){}
   switchPage('home');
 })();
 

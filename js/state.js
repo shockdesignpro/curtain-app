@@ -110,12 +110,12 @@ if(products === null){
 }
 
 // ---- SAQLASH FUNKSIYALARI (barchasi try/catch bilan himoyalangan) ----
-function savePr(){safeSetLS('parda_products', products);}
-function saveCalc(){safeSetLS('parda_calc', calcRows);}
-function saveOrders(){safeSetLS('parda_orders', orders);}
-function saveRooms(){safeSetLS('parda_rooms', rooms);}
-function saveAndoza(){safeSetLS('parda_andoza', andozaImages);}
-function saveUsage(){safeSetLS('parda_usage', productUsage);}
+function savePr(){return safeSetLS('parda_products', products);}
+function saveCalc(){return safeSetLS('parda_calc', calcRows);}
+function saveOrders(){return safeSetLS('parda_orders', orders);}
+function saveRooms(){return safeSetLS('parda_rooms', rooms);}
+function saveAndoza(){return safeSetLS('parda_andoza', andozaImages);}
+function saveUsage(){return safeSetLS('parda_usage', productUsage);}
 function saveClient(){
   clientData = {
     ism: document.getElementById('mijoz-ism').value,

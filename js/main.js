@@ -40,6 +40,7 @@ function openImageViewer(src){
   var ov=document.getElementById('img-viewer-ov');
   var img=document.getElementById('img-viewer-img');
   if(!ov||!img)return;
+  src=safeImgSrc(src);if(!src)return;
   img.src=src;
   ov.classList.add('open');
 }

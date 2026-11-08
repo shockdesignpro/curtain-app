@@ -56,8 +56,11 @@ function removeParda(roomId,pardaId){
   saveRooms();saveCalc();renderRooms();renderAllRows();
 }
 function unlinkPardaRows(pardaIds){
+  // ID'lar son yoki satr ("5") bo'lishi mumkin - satr sifatida solishtiramiz.
+  var ids=pardaIds.map(String);
+  function linked(v){return v!=null&&v!==''&&ids.indexOf(String(v))!==-1;}
   ['mahsulot','tikish','ustanovka'].forEach(function(type){
-    calcRows[type]=calcRows[type].filter(function(row){return pardaIds.indexOf(row.linkParda)===-1&&pardaIds.indexOf(row.costPardaId)===-1;});
+    calcRows[type]=calcRows[type].filter(function(row){return !linked(row.linkParda)&&!linked(row.costPardaId);});
   });
 }
 // 6-band: bo'yi/eni maydonlariga son validatsiyasi. Kiritishni bloklamaydi (foydalanuvchi
@@ -70,7 +73,7 @@ function onPardaField(roomId,pardaId,field,val){
   if((field==='boyi'||field==='eni') && String(val).trim()!==''){
     var num=parseMq(val);
     var label=field==='boyi'?"Bo'yi":'Eni';
-    if(!num||num<=0){
+    if((!num||num<=0)&&!/^0*[.,]?0*$/.test(String(val).trim())){
       showSnack("⚠️ "+label+" musbat son bo'lishi kerak");
     } else if(num>100){
       showSnack("⚠️ "+label+" juda katta ko'rinadi ("+num+" m) — tekshirib ko'ring");
@@ -84,11 +87,13 @@ function onPardaField(roomId,pardaId,field,val){
 // (miqdorni o'zgartirilsa, sinxronlash to'xtaydi - qo'lda tahrirlash imkoniyati saqlanadi)
 function syncEniToServices(pardaId,eniVal){
   var q=parseMq(eniVal);
+  var parda=null;
+  rooms.forEach(function(room){(room.pardalar||[]).forEach(function(p){if(p.id===pardaId)parda=p;});});
   ['tikish','ustanovka'].forEach(function(type){
     var row=calcRows[type].find(function(r){return r.linkParda===pardaId;});
     if(row){
       if(row.autoSync!==false){row.miqdor=q;}
-    } else {
+    } else if(!(parda&&parda.autoOff&&parda.autoOff[type])){
       var prods=products.filter(function(p){return p.bolim===type;});
       if(prods.length){
         var id=++rowCnt;
