@@ -8,14 +8,14 @@ function addCalcRow(type){
   if(!prods.length){showSnack("Avval mahsulot qo'shing!");return;}
   var initial=type==='mahsulot'?(prods.find(function(p){return p.name.trim().toLocaleLowerCase()==='material';})||prods[0]):prods[0];
   var id=++rowCnt;
-  calcRows[type].push({id:id,prodId:initial.id,miqdor:1,roomId:currentCostRoom(),costPardaId:currentCostParda(),price:initial.price});
+  calcRows[type].push({id:id,prodId:initial.id,miqdor:null,roomId:currentCostRoom(),costPardaId:currentCostParda(),price:initial.price});
   saveCalc();renderSection(type);recalc();
 }
 function quickAddRow(type,prodId){
   var prod=products.find(function(p){return p.id===prodId;});
   if(!prod)return;
   var id=++rowCnt;
-  calcRows[type].push({id:id,prodId:prodId,miqdor:1,roomId:currentCostRoom(),costPardaId:currentCostParda(),price:prod.price});
+  calcRows[type].push({id:id,prodId:prodId,miqdor:null,roomId:currentCostRoom(),costPardaId:currentCostParda(),price:prod.price});
   saveCalc();renderSection(type);recalc();
   showSnack('✅ '+prod.name+" qo'shildi");
 }
@@ -80,7 +80,7 @@ function renderSection(type){
         +' oninput="onPrice(\''+type+'\','+row.id+',this.value,this)"'
         +' onblur="finishCalcInput(\''+type+'\','+row.id+',\'price\',this)"/></label>'
       +'<label for="quantity-'+key+'"><span class="field-label">Miqdor · '+esc(prod.unit)+'</span>'
-      +'<input id="quantity-'+key+'" class="mq-input" type="text" inputmode="decimal" autocomplete="off" value="'+esc(row.miqdor)+'"'
+      +'<input id="quantity-'+key+'" class="mq-input" type="text" inputmode="decimal" autocomplete="off" placeholder="1" value="'+esc(mqText(row.miqdor))+'"'
         +' oninput="onMq(\''+type+'\','+row.id+',this.value,this)"'
         +' onblur="finishCalcInput(\''+type+'\','+row.id+',\'quantity\',this)"/></label></div>'
       +'<div class="calc-total"><span>Summa</span><output class="row-sum" for="price-'+key+' quantity-'+key+'">'+fmtN(sum)+'</output></div>'
@@ -118,9 +118,11 @@ function updateCalcAmounts(){
 }
 function onMq(type,id,val,input){
   var row=calcRows[type].find(function(r){return r.id===id;});
-  var value=calcNumber(val);
-  if(input)input.setAttribute('aria-invalid',String(value===null));
-  if(!row||value===null)return;
+  // Miqdor maydoni bo'sh qoldirilishi mumkin - tikuvchi keyin o'zi yozadi.
+  var empty=String(val).trim()==='';
+  var value=empty?null:calcNumber(val);
+  if(input)input.setAttribute('aria-invalid',String(!empty&&value===null));
+  if(!row||(!empty&&value===null))return;
   row.miqdor=value;
   if(row.linkParda)row.autoSync=false;
   saveCalc();updateCalcAmounts();
@@ -154,7 +156,7 @@ function finishCalcInput(type,id,field,input){
   if(!row)return;
   var prod=products.find(function(p){return p.id===row.prodId;});
   if(input.getAttribute('aria-invalid')==='true')showSnack('Musbat son kiriting. Masalan: 2,5');
-  input.value=field==='price'?formatCalcPrice(costRowPrice(row)):row.miqdor;
+  input.value=field==='price'?formatCalcPrice(costRowPrice(row)):mqText(row.miqdor);
   input.removeAttribute('aria-invalid');
 }
 
@@ -199,7 +201,7 @@ function renderDetailSummary(){
       return '<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:14px;">'
         +'<span style="flex:1;color:var(--text);">'+esc(name)+'</span>'
         +'<span style="color:var(--muted);width:64px;text-align:center;">'+fmtN(price)+'</span>'
-        +'<span style="color:var(--muted);width:40px;text-align:center;">×'+esc(row.miqdor)+'</span>'
+        +'<span style="color:var(--muted);width:40px;text-align:center;">×'+esc(mqText(row.miqdor))+'</span>'
         +'<span style="font-weight:800;width:78px;text-align:right;">'+fmtN(sum)+'</span>'
         +'</div>';
     }).join('')

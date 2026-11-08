@@ -69,15 +69,15 @@
     const base=window.exportJPG;window.exportJPG=()=>{if(!busy)return base();};
     window.exportCatalog=()=>fileActions(new File([window.catalogCSV()],'Lobar-katalog.csv',{type:'text/csv;charset=utf-8'}),'Katalogni eksport qilish');
     window.exportBackup=()=>{
-      const data={app:'parda_kalkulyatori',version:2,exportedAt:new Date().toISOString(),orders:window.orders,products:window.products,rooms:window.rooms,andoza:window.andozaImages,client:window.clientData,usage:window.productUsage,calc:window.calcRows};
+      const data={app:'parda_kalkulyatori',version:2,exportedAt:new Date().toISOString(),orders:window.orders,products:window.products,rooms:window.rooms,andoza:window.andozaImages,client:window.clientData,usage:window.productUsage,calc:window.calcRows,macros:window.macros};
       fileActions(new File([JSON.stringify(data)],'Lobar-zaxira-'+Date.now()+'.json',{type:'application/json'}),'Zaxira nusxa');
     };
-    const card=document.querySelector('#page-settings .card');
+    const card=document.getElementById('settings-notifications');
     card.innerHTML='<h3>Eslatmalar</h3><p class="input-note">Taqvimga qo‘shilgan buyurtmalar bir kun oldin va topshirish kuni eslatiladi. Sana o‘zgarsa, taqvimdagi yozuvni ham yangilang. Ovoz taqvim ilovasida sozlanadi.</p><label for="reminder-time">Eslatma vaqti</label><input id="reminder-time" type="time" value="10:00"><span id="reminder-sound-name" hidden></span>';
     card.append(button('Vaqtni saqlash',()=>window.saveReminderSettings()),button('Taqvimga eksport qilish',calendar));
-    const setup=document.createElement('div');setup.className='card';setup.innerHTML='<h3>Lobar Parda PWA</h3><p id="pwa-status" class="input-note">Offline fayllar tayyorlanmoqda…</p><p class="input-note">Buyurtmalar shu qurilmada saqlanadi. Qurilmalar o‘rtasida ko‘chirish uchun zaxira nusxadan foydalaning.</p>';
+    const setup=document.createElement('div');setup.className='card';setup.innerHTML='<h3>Ilova va zaxira nusxa</h3><p id="pwa-status" class="input-note">Offline fayllar tayyorlanmoqda…</p><p class="input-note">Buyurtmalar shu qurilmada saqlanadi. Qurilmalar o‘rtasida ko‘chirish uchun zaxira nusxadan foydalaning.</p>';
     setup.append(button('Bosh ekranga o‘rnatish',install),button('Zaxira nusxa olish',()=>window.exportBackup()),button('Zaxiradan tiklash',()=>window.triggerImportBackup()),button('Yangilanishni tekshirish',async()=>{try{await registration?.update();toast(registration?.waiting?'Yangi versiya tayyor. Ilovaning barcha oynalarini yopib, qayta oching.':'Tekshirildi. Yangilanish bo‘lsa, keyingi ochilishda qo‘llanadi.');}catch{toast('Internet ulanishini tekshiring');}}));
-    document.getElementById('page-settings').append(setup);
+    document.getElementById('settings-pwa').append(setup);
     const hint=document.getElementById('reminder-hint');if(hint)hint.textContent='Eslatmalarni Sozlamalar bo‘limidan taqvimga qo‘shishingiz mumkin.';
     window.requestMobileReminders=calendar;
     if('serviceWorker' in navigator){

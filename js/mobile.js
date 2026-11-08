@@ -126,8 +126,16 @@ function validateCustomerStep(){
 }
 function validateServicesStep(){
   var rows=[].concat(calcRows.mahsulot,calcRows.tikish,calcRows.ustanovka);
-  if(!rows.length||getSum('mahsulot')+getSum('tikish')+getSum('ustanovka')<=0){showSnack('Kamida bitta mahsulot yoki xizmat va uning miqdorini kiriting');return false;}
-  for(var row of rows){var prod=products.find(function(p){return p.id===row.prodId;});if(!prod||!Number.isFinite(Number(row.miqdor))||Number(row.miqdor)<=0||!Number.isFinite(costRowPrice(row))||costRowPrice(row)<0){showSnack('Har bir qatorda mahsulot, to‘g‘ri narx va musbat miqdor bo‘lishi kerak');return false;}}
+  if(!rows.length){showSnack('Kamida bitta mahsulot yoki xizmat qo‘shing');return false;}
+  for(var row of rows){var prod=products.find(function(p){return p.id===row.prodId;});
+    if(prod&&(row.miqdor==null||!(Number(row.miqdor)>0))){
+      var type=['mahsulot','tikish','ustanovka'].find(function(t){return calcRows[t].indexOf(row)!==-1;});
+      var mq=document.getElementById('quantity-'+type+'-'+row.id);
+      if(mq)return stepError(mq.id,'“'+prod.name+'” uchun miqdorni kiriting');
+      showSnack('“'+prod.name+'” uchun miqdor kiritilmagan. Boshqa xona yoki derazani tekshiring');return false;
+    }
+    if(!prod||!Number.isFinite(costRowPrice(row))||costRowPrice(row)<0){showSnack('Har bir qatorda mahsulot, to‘g‘ri narx va musbat miqdor bo‘lishi kerak');return false;}}
+  if(getSum('mahsulot')+getSum('tikish')+getSum('ustanovka')<=0){showSnack('Hisob jami 0 so‘m. Narx va miqdorlarni tekshiring');return false;}
   return true;
 }
 function resumeMobileOrder(){
@@ -159,6 +167,7 @@ function mobileBack(){
   if(document.getElementById('lock-ov')&&!document.getElementById('lock-ov').classList.contains('hidden'))return false;
   var closers=[['confirm-ov',function(){document.getElementById('confirm-cancel-btn').click();}],['img-viewer-ov',closeImageViewer],['add-modal',closeModal],['quick-actions',closeQuickActions]];
   for(var i=0;i<closers.length;i++){if(document.getElementById(closers[i][0]).classList.contains('open')){closers[i][1]();return true;}}
+  if(mobilePage==='settings'&&window.settingsSection){closeSettingsSection();return true;}
   if(mobilePage==='tarix'&&focusedMobileOrderId!==null){returnFromOrder();return true;}
   var idx=EDITOR_PAGES.indexOf(mobilePage);if(idx>0){switchPage(EDITOR_PAGES[idx-1]);return true;}
   if(mobilePage!=='home'){switchPage('home');return true;}return false;
@@ -171,6 +180,14 @@ function mobileBack(){
   var resetBase=resetAllData;resetAllData=function(){resetBase();localStorage.removeItem('parda_draft_meta');refreshMobile();if(window.NativeBridge)NativeBridge.persist();};
   // Preserve filtering, details, payments, production steps and all existing actions.
   document.addEventListener('keydown',function(e){if(e.key==='Escape')mobileBack();});
+  // Bo'sh qoldirilgani uchun qizil bilan belgilangan maydonga biror narsa yozilsa - belgini olib tashlaymiz.
+  // (Narx/miqdor maydonlari o'z tekshiruviga ega, ular bu yerda chetlab o'tiladi.)
+  document.addEventListener('input',function(e){
+    var el=e.target;
+    if(!el||!el.getAttribute||el.getAttribute('aria-invalid')!=='true')return;
+    if(el.matches&&el.matches('.mq-input,.price-input'))return;
+    if(String(el.value||'').trim()!=='')el.removeAttribute('aria-invalid');
+  },true);
   try{var meta=JSON.parse(localStorage.getItem('parda_draft_meta')||'{}');var editOrder=meta.orderId&&orders.find(function(o){return o.id===meta.orderId;});if(editOrder){orderEditId=meta.orderId;showEditBanner(editOrder.ism);}}catch(e){}
   switchPage('home');
 })();

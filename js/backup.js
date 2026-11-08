@@ -6,7 +6,7 @@ function exportBackup(){
   var data={
     app:'parda_kalkulyatori', version:2, exportedAt:new Date().toISOString(),
     orders: orders, products: products, rooms: rooms,
-    andoza: andozaImages, client: clientData, usage: productUsage, calc: calcRows
+    andoza: andozaImages, client: clientData, usage: productUsage, calc: calcRows, macros: macros
   };
   var blob=new Blob([JSON.stringify(data)],{type:'application/json'});
   var url=URL.createObjectURL(blob);
@@ -66,7 +66,7 @@ function sanitizeBackup(data){
   });
   var calc={mahsulot:[],tikish:[],ustanovka:[]},rawCalc=bkObj(data.calc);
   BK_BOLIM.forEach(function(t){calc[t]=bkArr(rawCalc[t]).filter(function(r){return r&&typeof r==='object'&&bkId(r.id)!==null&&bkId(r.prodId)!==null;}).map(function(r){
-    return {id:bkId(r.id),prodId:bkId(r.prodId),miqdor:Math.max(0,bkNum(r.miqdor,0)),price:r.price==null?null:Math.max(0,bkNum(r.price,0)),
+    return {id:bkId(r.id),prodId:bkId(r.prodId),miqdor:r.miqdor==null||r.miqdor===''?null:Math.max(0,bkNum(r.miqdor,0)),price:r.price==null?null:Math.max(0,bkNum(r.price,0)),
       roomId:r.roomId==null||r.roomId===''?null:bkStr(r.roomId),costPardaId:r.costPardaId==null||r.costPardaId===''?undefined:bkStr(r.costPardaId),linkParda:bkId(r.linkParda)||undefined,autoSync:r.autoSync};
   });});
   var client=bkObj(data.client);
@@ -111,6 +111,7 @@ function importBackup(files){
       rooms.forEach(function(r){roomCnt=Math.max(roomCnt,Number(r.id)||0);(r.pardalar||[]).forEach(function(a){pardaCnt=Math.max(pardaCnt,Number(a.id)||0);});});
       orderEditId=null;localStorage.removeItem('parda_draft_meta');hideEditBanner();saveCalc();
       productUsage=clean.usage;
+      if(Array.isArray(data.macros)){macros=sanitizeMacros(data.macros);saveMacros();renderMacroButtons();}
       saveOrders();savePr();saveRooms();saveAndoza();saveUsage();
       safeSetLS('parda_client', clientData);
       document.getElementById('mijoz-ism').value=clientData.ism||'';

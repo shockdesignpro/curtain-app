@@ -56,6 +56,8 @@ function fmt(n){
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function parseMq(v){return parseFloat(String(v).trim().replace(',','.'))||0;}
 function parsePrice(v){return parseFloat(String(v).trim().replace(/\s+/g,'').replace(',','.'))||0;}
+// Miqdor bo'sh (null) bo'lishi mumkin - ekranda bo'sh joy ko'rsatamiz.
+function mqText(v){return v==null?'':String(v);}
 function normPhone(v){return String(v||'').replace(/\D/g,'');}
 // Faqat rasm data-URL yoki http(s) manzilini qabul qiladi (zaxira fayl orqali XSS bo'lmasligi uchun).
 function safeImgSrc(src){src=String(src||'');return /^(data:image\/(png|jpe?g|gif|webp);base64,[A-Za-z0-9+\/=\s]+|https?:\/\/[^\s"'<>]+)$/i.test(src)?src:'';}

@@ -71,7 +71,7 @@ function roomCostDetailsHtml(data){
       +['mahsulot','tikish','ustanovka'].map(function(t,i){
         var sum=[g.mS,g.tS,g.uS][i];
         return '<h4><span>'+['Xarajatlar','Tikish','O‘rnatish'][i]+'</span><strong>'+fmt(sum)+'</strong></h4>'
-          +(g.rows[t].length?g.rows[t].map(function(row){return '<div class="room-cost-line"><span>'+esc(row.name)+'<small>'+fmtN(row.price)+' × '+esc(row.miqdor)+'</small></span><strong>'+fmt(row.sum)+'</strong></div>';}).join(''):'<p class="room-cost-empty">Kiritilmagan</p>');
+          +(g.rows[t].length?g.rows[t].map(function(row){return '<div class="room-cost-line"><span>'+esc(row.name)+'<small>'+fmtN(row.price)+' × '+esc(mqText(row.miqdor))+'</small></span><strong>'+fmt(row.sum)+'</strong></div>';}).join(''):'<p class="room-cost-empty">Kiritilmagan</p>');
       }).join('')+'</details>';
   }).join('')+'</div>';
 }
@@ -83,7 +83,7 @@ function roomReceiptSections(data){
   var curtains=g.room?(g.room.pardalar||[]):[];
   return '<section class="rcpt-room-group"><h3>'+(i+1)+'. '+esc(g.name)+(g.room?' — '+curtains.length+' ta parda':'')+'</h3>'
    +curtains.map(function(c,j){return '<div class="room-dimension"><span>'+pardaLabel(curtains,j)+' <em>('+esc(c.karniz)+', '+esc(c.rang)+')</em></span><strong>'+esc(c.boyi)+' × '+esc(c.eni)+' m</strong></div>';}).join('')
-   +['mahsulot','tikish','ustanovka'].map(function(t,j){return '<div class="room-category category-'+t+'"><span>'+['<span class="room-category-icon">📦</span>Harajatlar','<span class="room-category-icon">✂️</span>Tikish xizmati','<span class="room-category-icon">🔧</span>O‘rnatish xizmati'][j]+'</span><strong>'+fmt([g.mS,g.tS,g.uS][j])+'</strong></div>'+g.rows[t].map(function(r){return '<div class="room-item"><span>'+esc(r.name)+'</span><span>'+fmtN(r.price)+'</span><span>×'+esc(r.miqdor)+'</span><strong>'+fmtN(r.sum)+'</strong></div>';}).join('');}).join('')
+   +['mahsulot','tikish','ustanovka'].map(function(t,j){return '<div class="room-category category-'+t+'"><span>'+['<span class="room-category-icon">📦</span>Harajatlar','<span class="room-category-icon">✂️</span>Tikish xizmati','<span class="room-category-icon">🔧</span>O‘rnatish xizmati'][j]+'</span><strong>'+fmt([g.mS,g.tS,g.uS][j])+'</strong></div>'+g.rows[t].map(function(r){return '<div class="room-item"><span>'+esc(r.name)+'</span><span>'+fmtN(r.price)+'</span><span>×'+esc(mqText(r.miqdor))+'</span><strong>'+fmtN(r.sum)+'</strong></div>';}).join('');}).join('')
    +'<div class="room-grand"><span>JAMI:</span><strong>'+fmt(g.grand)+'</strong></div></section>';
  }).join('');
 }
