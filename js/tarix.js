@@ -338,9 +338,12 @@ function loadOrderForEdit(id){
   ['mahsulot','tikish','ustanovka'].forEach(function(type){
     ((o.rows&&o.rows[type])||[]).forEach(function(row){
       var prod=null;
-      if(row.prodId) prod=products.find(function(p){return p.id===row.prodId;});
+      // Katalog ID'lari qayta tartiblangan bo'lishi mumkin - avval ID va NOM ikkalasi mos kelganini,
+      // keyin nom bo'yicha, eng oxirida faqat ID bo'yicha (nom o'zgartirilgan bo'lsa) qidiramiz.
+      if(row.prodId) prod=products.find(function(p){return p.id===row.prodId&&p.name===row.name;});
       if(!prod) prod=products.find(function(p){return p.bolim===type&&p.name===row.name&&Number(p.price)===Number(row.price);})
         ||products.find(function(p){return p.bolim===type&&p.name===row.name;});
+      if(!prod&&row.prodId) prod=products.find(function(p){return p.id===row.prodId&&p.bolim===type;});
       if(prod){
         calcRows[type].push({id:++rowCnt,prodId:prod.id,miqdor:row.miqdor,price:row.price,roomId:roomMap[String(row.roomId)]||null,costPardaId:pardaMap[String(row.costPardaId)],linkParda:pardaMap[String(row.linkParda)],autoSync:row.autoSync});
       } else {

@@ -45,35 +45,42 @@ function syncDefaultCatalog(text){
   var applied=(safeGetLS('parda_catalog_ids',null)||CATALOG_LEGACY_IDS).map(String);
   var catalogIds=items.map(function(i){return String(i.id);});
   var maxId=Math.max.apply(null,[0].concat(products.map(function(p){return Number(p.id)||0;}),items.map(function(i){return i.id;})));
-  var next=[], remap={}, removed={};
+  var next=[], remap={}, dropped={};
 
   products.forEach(function(p){
     var id=String(p.id);
-    if(catalogIds.indexOf(id)!==-1){
-      if(applied.indexOf(id)===-1){
-        // Xodimning o'z mahsuloti tasodifan katalogdagi yangi ID bilan bir xil - unga yangi ID beramiz.
-        var newId=++maxId; remap[id]=newId; next.push(Object.assign({},p,{id:newId}));
-      }
-      return; // standart mahsulot - katalogdagi yangi qiymat bilan almashtiriladi
+    if(catalogIds.indexOf(id)!==-1&&applied.indexOf(id)===-1){
+      // Xodimning o'z mahsuloti tasodifan katalogdagi ID bilan bir xil - unga yangi ID beramiz.
+      var newId=++maxId; remap[id]=newId; next.push(Object.assign({},p,{id:newId}));
+      return;
     }
-    if(applied.indexOf(id)!==-1){ removed[id]=p; return; } // katalogdan olib tashlangan
+    if(applied.indexOf(id)!==-1){ dropped[id]=p; return; } // standart mahsulot - katalogdagi qiymat bilan almashtiriladi
     next.push(p); // xodimning o'zi qo'shgan mahsulot
   });
   items.forEach(function(i){next.push({id:i.id,name:i.name,bolim:i.bolim,price:i.price,unit:i.unit});});
 
-  // O'chirilgan mahsulotga bog'langan qatorlarni shu nom va bo'limdagi mahsulotga ko'chiramiz
-  // (masalan, ikkinchi "Bubon" -> qolgan "Bubon").
-  Object.keys(removed).forEach(function(id){
-    var same=next.find(function(p){return catalogKey(p)===catalogKey(removed[id]);});
-    if(same)remap[id]=same.id;
+  // Eski standart mahsulotga bog'langan qatorlarni yangi ro'yxatdagi mahsulotga ulaymiz:
+  //  - shu ID'da hali ham o'sha nomli mahsulot bo'lsa - o'zgarishsiz qoladi;
+  //  - ID raqamlari qayta tartiblangan bo'lsa yoki takror o'chirilgan bo'lsa - NOMI va bo'limi bo'yicha topamiz;
+  //  - nomi o'zgargan bo'lsa (ID o'sha) - o'sha ID'da qoladi.
+  Object.keys(dropped).forEach(function(id){
+    var key=catalogKey(dropped[id]);
+    var sameId=next.find(function(p){return String(p.id)===id;});
+    if(sameId&&catalogKey(sameId)===key)return;
+    var sameName=next.find(function(p){return catalogKey(p)===key;});
+    if(sameName)remap[id]=sameName.id;
+    else if(!sameId)remap[id]=null; // butunlay o'chirilgan
   });
   if(Object.keys(remap).length){
     ['mahsulot','tikish','ustanovka'].forEach(function(t){
       (calcRows[t]||[]).forEach(function(r){var k=String(r.prodId);if(remap[k]!=null)r.prodId=remap[k];});
     });
-    Object.keys(remap).forEach(function(k){
-      if(productUsage[k]){productUsage[remap[k]]=(productUsage[remap[k]]||0)+productUsage[k];delete productUsage[k];}
+    var usage={};
+    Object.keys(productUsage).forEach(function(k){
+      var target=Object.prototype.hasOwnProperty.call(remap,k)?remap[k]:k;
+      if(target!=null)usage[target]=(usage[target]||0)+productUsage[k];
     });
+    productUsage=usage;
   }
 
   var before=products;

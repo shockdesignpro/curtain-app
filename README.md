@@ -27,7 +27,8 @@ Standart mahsulotlar ro‘yxati repozitoriy ildizidagi **`Lobar-katalog.csv`** f
 **2-usul: GitHub'da to‘g‘ridan-to‘g‘ri**
 `Lobar-katalog.csv` faylini oching, ✏️ (Edit) tugmasini bosing, narxni o‘zgartiring va **Commit changes** ni bosing. Format: `"ID";"Nomi";"Bolim";"Narx";"Birlik"`.
 - `Bolim` qiymati faqat `mahsulot`, `tikish` yoki `ustanovka` bo‘lishi mumkin.
-- Yangi mahsulotga boshqalarda **takrorlanmaydigan** yangi raqamli ID bering. Mavjud mahsulotning ID raqamini o‘zgartirmang.
+- Yangi mahsulotga boshqalarda **takrorlanmaydigan** yangi raqamli ID bering (masalan, eng katta ID + 1).
+- ID'larni qayta tartiblash mumkin: ilova mahsulotlarni nomi bo‘yicha qayta bog‘laydi. Faqat bitta o‘zgarishda **nom va ID'ni birdaniga** o‘zgartirmang, aks holda chala buyurtmalardagi qator mahsulotini topa olmaydi.
 - Narx bo‘sh joy va “so‘m” so‘zisiz yoziladi: `50000`.
 
 Faylda yo‘q, xodim o‘z telefonida qo‘shgan mahsulotlar saqlanib qoladi. Fayldan o‘chirilgan standart mahsulot esa hammadan o‘chadi.
