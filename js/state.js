@@ -74,12 +74,12 @@ if(products === null){
     {id:1,name:'Material',bolim:'mahsulot',price:40000,unit:'m'},
     {id:2,name:'Latta',bolim:'mahsulot',price:3250,unit:'m'},
     {id:3,name:'Karniz',bolim:'mahsulot',price:50000,unit:'dona'},
-    {id:4,name:'Perdakit',bolim:'mahsulot',price:5500,unit:'dona'},
+    {id:4,name:'Perdekit',bolim:'mahsulot',price:5500,unit:'dona'},
     {id:5,name:'Bir balo',bolim:'mahsulot',price:250,unit:'dona'},
     {id:6,name:'Kvars',bolim:'mahsulot',price:55000,unit:'m'},
     {id:7,name:'Karsaj',bolim:'mahsulot',price:25000,unit:'m'},
     {id:8,name:'Kadefe',bolim:'mahsulot',price:30000,unit:'m'},
-    {id:9,name:'Himoya',bolim:'mahsulot',price:35000,unit:'m'},
+    {id:9,name:'Zashitnik',bolim:'mahsulot',price:35000,unit:'m'},
     {id:10,name:'Xalqa',bolim:'mahsulot',price:1000,unit:'dona'},
     {id:11,name:'Kupala',bolim:'mahsulot',price:5000,unit:'m'},
     {id:12,name:'Baget',bolim:'mahsulot',price:35000,unit:'m'},
@@ -96,6 +96,15 @@ if(products === null){
     {id:23,name:'Ust. Karniz 2',bolim:'ustanovka',price:50000,unit:'m'},
     {id:24,name:'Ust. Karniz 3',bolim:'ustanovka',price:50000,unit:'m'},
     {id:25,name:'Ust. Karniz 4',bolim:'ustanovka',price:50000,unit:'m'}
+    {id:26,name:'Korset',bolim:'mahsulot',price:4000,unit:'m'},
+    {id:27,name:'Kolso',bolim:'mahsulot',price:1000,unit:'dona'},
+    {id:28,name:'Kolechka',bolim:'mahsulot',price:1500,unit:'dona'},
+    {id:29,name:'Tesma',bolim:'mahsulot',price:5000,unit:'m'},
+    {id:30,name:'Truba karniz',bolim:'mahsulot',price:18000,unit:'m'},
+    {id:31,name:'Bubon',bolim:'mahsulot',price:50000,unit:'dona'},
+    {id:32,name:'Derjalka',bolim:'mahsulot',price:50000,unit:'dona'},
+    {id:33,name:'Nojka',bolim:'mahsulot',price:15000,unit:'dona'},
+    {id:34,name:'Obxvat',bolim:'mahsulot',price:85000,unit:'dona'},
   ];
   savePr();
 }
