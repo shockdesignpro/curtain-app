@@ -69,71 +69,45 @@ var ROOM_NOMI=['Mehmonxona','Kuxnya','Spalniy','Detskiy','Balkon'];
 var KARNIZ_TUR=['Truba','Baget','Qosh'];
 var XONA_RANG=['Oq','Qora','Kulrang','Kumush','Qizil','Pushti','Sariq','Tilla','Jigarrang','Bej','Krem','Ko\'k','Zangori','Yashil','Binafsha','Shokolad'];
 
-// Bu ro'yxat ilovaga BIRINCHI marta kirgan har bir foydalanuvchi uchun
-// boshlang'ich katalog hisoblanadi. Yangi doimiy mahsulotni shu yerga,
-// yangi va takrorlanmaydigan ID bilan qo'shing.
-var DEFAULT_PRODUCTS = [
-    [
-    {id:1,name:'Baget',bolim:'mahsulot',price:35000,unit:'m'},
-    {id:2,name:'Bir balo',bolim:'mahsulot',price:250,unit:'dona'},
-    {id:3,name:'Bubon',bolim:'mahsulot',price:45000,unit:'dona'},
-    {id:4,name:'Derjalka',bolim:'mahsulot',price:25000,unit:'dona'},
-    {id:5,name:'Himoya',bolim:'mahsulot',price:35000,unit:'m'},
-    {id:6,name:'Kadefe',bolim:'mahsulot',price:30000,unit:'m'},
-    {id:7,name:'Karniz',bolim:'mahsulot',price:50000,unit:'dona'},
-    {id:8,name:'Karniz 1 (tikish)',bolim:'tikish',price:60000,unit:'m'},
-    {id:9,name:'Karniz 2 (tikish)',bolim:'tikish',price:60000,unit:'m'},
-    {id:10,name:'Karniz 3 (tikish)',bolim:'tikish',price:60000,unit:'m'},
-    {id:11,name:'Karniz 4 (tikish)',bolim:'tikish',price:60000,unit:'m'},
-    {id:12,name:'Karsaj',bolim:'mahsulot',price:25000,unit:'m'},
-    {id:13,name:'Kolechka',bolim:'mahsulot',price:1500,unit:'dona'},
-    {id:14,name:'Kolso',bolim:'mahsulot',price:1000,unit:'dona'},
-    {id:15,name:'Konfet bubi',bolim:'mahsulot',price:100000,unit:'dona'},
-    {id:16,name:'Korset',bolim:'mahsulot',price:4000,unit:'m'},
-    {id:17,name:'Kupala',bolim:'mahsulot',price:5000,unit:'m'},
-    {id:18,name:'Kvars',bolim:'mahsulot',price:55000,unit:'m'},
-    {id:19,name:'Latta',bolim:'mahsulot',price:3250,unit:'m'},
-    {id:20,name:'Magnit',bolim:'mahsulot',price:25000,unit:'juft'},
-    {id:21,name:'Material',bolim:'mahsulot',price:40000,unit:'m'},
-    {id:22,name:'Nojka',bolim:'mahsulot',price:15000,unit:'dona'},
-    {id:23,name:'Obxvat',bolim:'mahsulot',price:85000,unit:'dona'},
-    {id:24,name:'Perdakit',bolim:'mahsulot',price:5500,unit:'dona'},
-    {id:25,name:'Tesma',bolim:'mahsulot',price:5000,unit:'m'},
-    {id:26,name:'Truba karniz',bolim:'mahsulot',price:18000,unit:'m'},
-    {id:27,name:'Ust. Karniz 1',bolim:'ustanovka',price:50000,unit:'m'},
-    {id:28,name:'Ust. Karniz 2',bolim:'ustanovka',price:50000,unit:'m'},
-    {id:29,name:'Ust. Karniz 3',bolim:'ustanovka',price:50000,unit:'m'},
-    {id:30,name:'Ust. Karniz 4',bolim:'ustanovka',price:50000,unit:'m'},
-    {id:31,name:'Xalqa',bolim:'mahsulot',price:1000,unit:'dona'}
-];
-
-// Oldin katalog yaratib bo'lgan foydalanuvchilarda products localStorage'da
-// saqlangan bo'ladi. Shuning uchun yangi kod mahsulotlari ham ularga bir marta
-// qo'shiladi; foydalanuvchining narxi, nomi yoki o'zi qo'shgan mahsulotlari
-// ustidan yozilmaydi.
-var DEFAULT_PRODUCT_IDS_KEY='parda_default_catalog_ids_v1';
-var knownDefaultIds=safeGetLS(DEFAULT_PRODUCT_IDS_KEY,null);
-if(!Array.isArray(knownDefaultIds)){
-  // 1–25 avvalgi standart katalog edi. Yangi qo'shiladiganlar 26 dan boshlansin.
-  knownDefaultIds=DEFAULT_PRODUCTS.filter(function(p){return p.id<=25;}).map(function(p){return p.id;});
-}
 if(products === null){
-  products=DEFAULT_PRODUCTS.map(function(p){return Object.assign({},p);});
-  knownDefaultIds=DEFAULT_PRODUCTS.map(function(p){return p.id;});
+  products = [
+    {id:1,name:'Material',bolim:'mahsulot',price:40000,unit:'m'},
+    {id:2,name:'Latta',bolim:'mahsulot',price:3250,unit:'m'},
+    {id:3,name:'Karniz',bolim:'mahsulot',price:50000,unit:'dona'},
+    {id:4,name:'Perdekit',bolim:'mahsulot',price:5500,unit:'dona'},
+    {id:5,name:'Bir balo',bolim:'mahsulot',price:250,unit:'dona'},
+    {id:6,name:'Kvars',bolim:'mahsulot',price:55000,unit:'m'},
+    {id:7,name:'Karsaj',bolim:'mahsulot',price:25000,unit:'m'},
+    {id:8,name:'Kadefe',bolim:'mahsulot',price:30000,unit:'m'},
+    {id:9,name:'Zashitnik',bolim:'mahsulot',price:35000,unit:'m'},
+    {id:10,name:'Xalqa',bolim:'mahsulot',price:1000,unit:'dona'},
+    {id:11,name:'Kupala',bolim:'mahsulot',price:5000,unit:'m'},
+    {id:12,name:'Baget',bolim:'mahsulot',price:35000,unit:'m'},
+    {id:13,name:'Tesma',bolim:'mahsulot',price:5000,unit:'m'},
+    {id:14,name:'Magnit',bolim:'mahsulot',price:25000,unit:'juft'},
+    {id:15,name:'Konfet bubi',bolim:'mahsulot',price:100000,unit:'dona'},
+    {id:16,name:'Derjalka',bolim:'mahsulot',price:25000,unit:'dona'},
+    {id:17,name:'Bubon',bolim:'mahsulot',price:45000,unit:'dona'},
+    {id:18,name:'Karniz 1 (tikish)',bolim:'tikish',price:60000,unit:'m'},
+    {id:19,name:'Karniz 2 (tikish)',bolim:'tikish',price:60000,unit:'m'},
+    {id:20,name:'Karniz 3 (tikish)',bolim:'tikish',price:60000,unit:'m'},
+    {id:21,name:'Karniz 4 (tikish)',bolim:'tikish',price:60000,unit:'m'},
+    {id:22,name:'Ust. Karniz 1',bolim:'ustanovka',price:50000,unit:'m'},
+    {id:23,name:'Ust. Karniz 2',bolim:'ustanovka',price:50000,unit:'m'},
+    {id:24,name:'Ust. Karniz 3',bolim:'ustanovka',price:50000,unit:'m'},
+    {id:25,name:'Ust. Karniz 4',bolim:'ustanovka',price:50000,unit:'m'},
+    {id:26,name:'Korset',bolim:'mahsulot',price:4000,unit:'m'},
+    {id:27,name:'Kolso',bolim:'mahsulot',price:1000,unit:'dona'},
+    {id:28,name:'Kolechka',bolim:'mahsulot',price:1500,unit:'dona'},
+    {id:29,name:'Tesma',bolim:'mahsulot',price:5000,unit:'m'},
+    {id:30,name:'Truba karniz',bolim:'mahsulot',price:18000,unit:'m'},
+    {id:31,name:'Bubon',bolim:'mahsulot',price:50000,unit:'dona'},
+    {id:32,name:'Derjalka',bolim:'mahsulot',price:50000,unit:'dona'},
+    {id:33,name:'Nojka',bolim:'mahsulot',price:15000,unit:'dona'},
+    {id:34,name:'Obxvat',bolim:'mahsulot',price:85000,unit:'dona'},
+  ];
   savePr();
-} else {
-  var defaultsAdded=false;
-  DEFAULT_PRODUCTS.forEach(function(defaultProduct){
-    if(knownDefaultIds.indexOf(defaultProduct.id)!==-1)return;
-    var usedId=products.some(function(product){return product.id===defaultProduct.id;});
-    var nextId=usedId ? Math.max.apply(null,products.map(function(product){return Number(product.id)||0;}))+1 : defaultProduct.id;
-    products.push(Object.assign({},defaultProduct,{id:nextId}));
-    knownDefaultIds.push(defaultProduct.id);
-    defaultsAdded=true;
-  });
-  if(defaultsAdded)savePr();
 }
-safeSetLS(DEFAULT_PRODUCT_IDS_KEY,knownDefaultIds);
 
 // ---- SAQLASH FUNKSIYALARI (barchasi try/catch bilan himoyalangan) ----
 function savePr(){safeSetLS('parda_products', products);}
