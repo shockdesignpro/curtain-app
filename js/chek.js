@@ -18,7 +18,7 @@ function buildReceiptHtmlBase(data){
       return '<div class="rcpt-row">'
         +'<span class="rcpt-name">'+esc(row.name)+'</span>'
         +'<span class="rcpt-price">'+fmtN(row.price)+'</span>'
-        +'<span class="rcpt-mq">×'+esc(row.miqdor)+'</span>'
+        +'<span class="rcpt-mq">×'+esc(mqText(row.miqdor))+'</span>'
         +'<span class="rcpt-sum">'+fmtN(row.sum)+'</span>'
         +'</div>';
     }).join('');

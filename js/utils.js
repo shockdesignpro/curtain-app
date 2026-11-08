@@ -56,6 +56,8 @@ function fmt(n){
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function parseMq(v){return parseFloat(String(v).trim().replace(',','.'))||0;}
 function parsePrice(v){return parseFloat(String(v).trim().replace(/\s+/g,'').replace(',','.'))||0;}
+// Miqdor bo'sh (null) bo'lishi mumkin - ekranda bo'sh joy ko'rsatamiz.
+function mqText(v){return v==null?'':String(v);}
 function normPhone(v){return String(v||'').replace(/\D/g,'');}
 // Faqat rasm data-URL yoki http(s) manzilini qabul qiladi (zaxira fayl orqali XSS bo'lmasligi uchun).
 function safeImgSrc(src){src=String(src||'');return /^(data:image\/(png|jpe?g|gif|webp);base64,[A-Za-z0-9+\/=\s]+|https?:\/\/[^\s"'<>]+)$/i.test(src)?src:'';}
@@ -79,4 +81,14 @@ function showSnack(msg){
   s.textContent=msg;s.classList.add('show');
   clearTimeout(showSnack._t);
   showSnack._t = setTimeout(function(){ s.classList.remove('show'); },2400);
+}
+
+// ---- CSV O'QISH (katalog va makroslar fayllari uchun umumiy) ----
+// Ajratuvchi birinchi qatorga qarab tanlanadi (';' yoki ','), qo'shtirnoq ichidagi
+// ajratuvchi va yangi qatorlar hisobga olinadi, bo'sh qatorlar tashlab yuboriladi.
+function parseCSVRows(text){
+ text=text.replace(/^\ufeff/,'');var delimiter=text.split(/\r?\n/)[0].includes(';')?';':',',rows=[],row=[],value='',quoted=false;
+ for(var i=0;i<text.length;i++){var c=text[i];if(c==='"'){if(quoted&&text[i+1]==='"'){value+='"';i++;}else quoted=!quoted;}else if(!quoted&&(c===delimiter||c==='\n'||c==='\r')){row.push(value);value='';if(c!==delimiter){if(c==='\r'&&text[i+1]==='\n')i++;if(row.some(function(v){return v.trim();}))rows.push(row);row=[];}}else value+=c;}
+ if(quoted)throw new Error('CSV qo‘shtirnoqlari yopilmagan');row.push(value);if(row.some(function(v){return v.trim();}))rows.push(row);
+ return rows;
 }
