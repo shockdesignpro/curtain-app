@@ -86,7 +86,7 @@
 #mobile-shell .report-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
 #mobile-shell .report-heading h2{margin:0}
 #mobile-shell .report-filter{width:116px;flex:0 0 116px}
-#mobile-shell .report-filter .compact-select-trigger{font-size:13px;min-height:36px;margin:0;padding:7px 26px 7px 12px}
+#mobile-shell .report-filter .compact-select-trigger,#mobile-shell .report-filter select{font-size:13px;min-height:36px;margin:0;padding:7px 26px 7px 12px}
 
 /* 1.0.12: compact editor, flexible widths from small phones to large screens. */
 #mobile-shell .mobile-main{padding-top:12px}
@@ -114,8 +114,8 @@
 #mobile-shell #page-xizmatlar .calc-fields label:nth-child(1){grid-column:2;grid-row:1}
 #mobile-shell #page-xizmatlar .calc-fields label:nth-child(2){grid-column:3;grid-row:1}
 #mobile-shell #page-xizmatlar .calc-row .field-label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
-#mobile-shell #page-xizmatlar .calc-row input,#mobile-shell #page-xizmatlar .calc-row .compact-select-trigger{height:38px;min-height:38px;padding:7px 4px;font-size:12px;line-height:1.3;border-radius:8px}
-#mobile-shell #page-xizmatlar .calc-row .compact-select-trigger{padding-left:7px;padding-right:19px;font-size:12px}
+#mobile-shell #page-xizmatlar .calc-row input,#mobile-shell #page-xizmatlar .calc-row .compact-select-trigger,#mobile-shell #page-xizmatlar .calc-row select{height:38px;min-height:38px;padding:7px 4px;font-size:12px;line-height:1.3;border-radius:8px}
+#mobile-shell #page-xizmatlar .calc-row .compact-select-trigger,#mobile-shell #page-xizmatlar .calc-row select{padding-left:7px;padding-right:19px;font-size:12px}
 #mobile-shell #page-xizmatlar .calc-total{grid-column:4;grid-row:1;display:block;padding:0;background:none;border-radius:0;min-width:0}
 #mobile-shell #page-xizmatlar .calc-total>span{display:none}
 #mobile-shell #page-xizmatlar .calc-row .row-sum{font-size:12px;color:var(--text);line-height:1.3}
@@ -136,7 +136,7 @@
 #mobile-shell #page-hisob [id^=detail-]>div>span:not(:first-child){flex-shrink:0}
 @media(min-width:600px){
  #mobile-shell .mobile-main{width:100%;max-width:780px;margin-inline:auto}
- #mobile-shell #page-xizmatlar .calc-row input,#mobile-shell #page-xizmatlar .calc-row .compact-select-trigger{font-size:14px}
+ #mobile-shell #page-xizmatlar .calc-row input,#mobile-shell #page-xizmatlar .calc-row .compact-select-trigger,#mobile-shell #page-xizmatlar .calc-row select{font-size:14px}
  #mobile-shell #page-xizmatlar .calc-row .row-sum{font-size:14px}
  #mobile-shell #page-mahsulotlar .dimension-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
@@ -144,7 +144,7 @@
  #mobile-shell #page-xizmatlar .card{padding:9px}
  #mobile-shell #page-xizmatlar{--calc-columns:minmax(0,1fr) 44px 36px 60px 24px}
  #mobile-shell #page-xizmatlar .calc-row .del-btn{width:24px}
- #mobile-shell #page-xizmatlar .calc-row input,#mobile-shell #page-xizmatlar .calc-row .compact-select-trigger,#mobile-shell #page-xizmatlar .calc-row .row-sum{font-size:11px}
+ #mobile-shell #page-xizmatlar .calc-row input,#mobile-shell #page-xizmatlar .calc-row .compact-select-trigger,#mobile-shell #page-xizmatlar .calc-row select,#mobile-shell #page-xizmatlar .calc-row .row-sum{font-size:11px}
 }
 
 #mobile-shell #page-hisob .totals-card{background:linear-gradient(125deg,var(--teal-dark),var(--teal));color:#fff;border:0}
@@ -244,7 +244,7 @@
 .room-category>strong{line-height:18px}
 #mobile-shell .order-status-content{padding:8px 12px 12px}
 /* Xona o'lchamlari: Karniz turi va Rangi maydonlari Bo'yi/Eni bilan bir xil o'lchamda */
-#mobile-shell #page-mahsulotlar .dimension-grid .compact-select-trigger{height:38px;min-height:38px!important;padding:7px 24px 7px 9px!important;line-height:22px;font-size:15px}
+#mobile-shell #page-mahsulotlar .dimension-grid .compact-select-trigger,#mobile-shell #page-mahsulotlar .dimension-grid select{height:38px;min-height:38px!important;padding:7px 24px 7px 9px!important;line-height:22px;font-size:15px}
 /* Yengil "glow": fokusda yashil, xato (bo'sh) maydonda qizil nur. Faqat CSS - yuklanishga ta'sir qilmaydi. */
 #mobile-shell input:not([type=file]):not([type=checkbox]),#mobile-shell select,#mobile-shell .compact-select-trigger{transition:border-color .18s ease,box-shadow .18s ease}
 #mobile-shell input:not([type=file]):not([type=checkbox]):focus,#mobile-shell select:focus,#mobile-shell .compact-select-trigger:focus-visible{border-color:var(--teal)!important;box-shadow:0 0 0 3px rgba(13,122,95,.16),0 0 12px rgba(13,122,95,.22)!important;outline:none}
@@ -294,3 +294,9 @@
 #mobile-shell .macro-share h3{margin:0 0 4px;font-size:15px}
 #mobile-shell .macro-share code{font-size:12px;background:var(--teal-light);padding:1px 5px;border-radius:5px}
 #mobile-shell .macro-share .add-row-btn{margin-top:10px}
+/* Barcha ro'yxatlar telefonning o'z tanlash menyusi bilan ochiladi (iOS: maydon yonidagi menyu).
+   Tashqi ko'rinish hamma joyda bir xil: standart bezak o'chirilgan, o'ngda yashil strelka. */
+#mobile-shell select{-webkit-appearance:none;appearance:none;box-sizing:border-box;width:100%;min-width:0;text-overflow:ellipsis;white-space:nowrap;color:var(--text);padding-right:30px!important;background-color:var(--bg);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230d7a5f' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:right 10px center!important;background-size:14px 14px!important}
+:root[data-theme="dark"] #mobile-shell select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2328c795' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")!important}
+#mobile-shell #page-xizmatlar .calc-row select{padding-right:22px!important;background-position:right 6px center!important;background-size:12px 12px!important}
+#mobile-shell select::-ms-expand{display:none}
