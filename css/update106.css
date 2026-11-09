@@ -286,9 +286,11 @@
 #mobile-shell .macro-item-text small{font-size:12px;color:var(--muted)}
 #mobile-shell .macro-item-missing .macro-item-text strong,#mobile-shell .macro-item-missing .macro-item-text small{color:var(--red)}
 #mobile-shell .macro-empty{margin:0}
-#mobile-shell .macro-add{display:flex;gap:8px;margin-top:10px;align-items:stretch}
-#mobile-shell .macro-add select{flex:1;min-width:0;height:46px;min-height:46px!important;font-size:14px;padding:8px 10px}
-#mobile-shell .macro-add .add-row-btn{width:auto;flex-shrink:0;height:46px;min-height:46px;margin:0;padding:8px 14px}
+/* Ro'yxat va "Biriktirish" tugmasi yonma-yon, aynan bir xil balandlikda (iOS Safari ham) */
+#mobile-shell .macro-add{display:flex;gap:8px;margin-top:10px;align-items:center}
+#mobile-shell #page-settings .macro-add select,#mobile-shell #page-settings .macro-add .add-row-btn{box-sizing:border-box;height:46px;min-height:46px!important;max-height:46px;margin:0!important;border-radius:11px}
+#mobile-shell #page-settings .macro-add select{flex:1;min-width:0;font-size:15px;line-height:20px;padding:0 34px 0 12px;-webkit-appearance:none;appearance:none;background-color:var(--card);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230d7a5f' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:14px 14px;text-overflow:ellipsis;white-space:nowrap}
+#mobile-shell #page-settings .macro-add .add-row-btn{width:auto;flex:0 0 auto;padding:0 16px;white-space:nowrap;line-height:1}
 #mobile-shell .macro-share h3{margin:0 0 4px;font-size:15px}
 #mobile-shell .macro-share code{font-size:12px;background:var(--teal-light);padding:1px 5px;border-radius:5px}
 #mobile-shell .macro-share .add-row-btn{margin-top:10px}
