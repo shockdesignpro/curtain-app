@@ -301,3 +301,10 @@
 #mobile-shell #page-xizmatlar .calc-row select{padding-right:22px!important;background-position:right 6px center!important;background-size:12px 12px!important}
 #mobile-shell select::-ms-expand{display:none}
 .room-subhead{padding:7px 6px 3px;font-size:11.5px;font-weight:800;color:var(--teal-dark,#095c47);border-bottom:1px solid var(--border)}
+/* Chek (rasm) ranglari tungi rejimda ham o'zgarmaydi: chek blokiga yorug' mavzu ranglari qat'iy beriladi. */
+#receipt-area,[data-theme] #receipt-area{
+  --teal:#0d7a5f;--teal-light:#e6f5f1;--teal-mid:#1a9e7a;--teal-dark:#095c47;
+  --amber:#e8a020;--amber-light:#fef6e6;--purple:#6b5fe0;--purple-light:#f0eeff;
+  --red:#d94040;--red-light:#fdeaea;--blue:#1a6fb5;--blue-light:#e8f2fc;
+  --bg:#f4f6f5;--card:#fff;--text:#1a2420;--muted:#6b8076;--border:#dde8e4;
+  color:#1a2420;background:#fff;color-scheme:light}
