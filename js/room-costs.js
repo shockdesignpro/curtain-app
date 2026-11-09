@@ -78,12 +78,24 @@ function roomCostDetailsHtml(data){
 function renderRoomCostSummary(){
   var el=document.getElementById('room-cost-summary');if(el)el.innerHTML=roomCostDetailsHtml(currentCostSnapshot());
 }
+// Chekdagi qatorlar: xonada 2 va undan ko'p deraza/eshik bo'lsa, har biri uchun alohida
+// kichik sarlavha ostida ko'rsatiladi (Deraza 1, Deraza 2, Eshik 1...). Hech biriga
+// biriktirilmagan qatorlar "Umumiy" ostida. Bitta deraza bo'lsa - avvalgidek ro'yxat.
+function receiptRowsHtml(rows,curtains){
+ function line(r){return '<div class="room-item"><span>'+esc(r.name)+'</span><span>'+fmtN(r.price)+'</span><span>×'+esc(mqText(r.miqdor))+'</span><strong>'+fmtN(r.sum)+'</strong></div>';}
+ if(curtains.length<2)return rows.map(line).join('');
+ function key(r){var v=(r.costPardaId!=null&&r.costPardaId!=='')?r.costPardaId:r.linkParda;return v==null?'':String(v);}
+ var groups=curtains.map(function(c,j){return {label:pardaLabel(curtains,j),rows:rows.filter(function(r){return key(r)===String(c.id);})};});
+ var other=rows.filter(function(r){return !curtains.some(function(c){return String(c.id)===key(r);});});
+ if(other.length)groups.push({label:'Umumiy',rows:other});
+ return groups.filter(function(g){return g.rows.length;}).map(function(g){return '<div class="room-subhead">'+g.label+'</div>'+g.rows.map(line).join('');}).join('');
+}
 function roomReceiptSections(data){
  return costGroups(data).map(function(g,i){
   var curtains=g.room?(g.room.pardalar||[]):[];
   return '<section class="rcpt-room-group"><h3>'+(i+1)+'. '+esc(g.name)+(g.room?' — '+curtains.length+' ta parda':'')+'</h3>'
    +curtains.map(function(c,j){return '<div class="room-dimension"><span>'+pardaLabel(curtains,j)+' <em>('+esc(c.karniz)+', '+esc(c.rang)+')</em></span><strong>'+esc(c.boyi)+' × '+esc(c.eni)+' m</strong></div>';}).join('')
-   +['mahsulot','tikish','ustanovka'].map(function(t,j){return '<div class="room-category category-'+t+'"><span>'+['<span class="room-category-icon">📦</span>Harajatlar','<span class="room-category-icon">✂️</span>Tikish xizmati','<span class="room-category-icon">🔧</span>O‘rnatish xizmati'][j]+'</span><strong>'+fmt([g.mS,g.tS,g.uS][j])+'</strong></div>'+g.rows[t].map(function(r){return '<div class="room-item"><span>'+esc(r.name)+'</span><span>'+fmtN(r.price)+'</span><span>×'+esc(mqText(r.miqdor))+'</span><strong>'+fmtN(r.sum)+'</strong></div>';}).join('');}).join('')
+   +['mahsulot','tikish','ustanovka'].map(function(t,j){return '<div class="room-category category-'+t+'"><span>'+['<span class="room-category-icon">📦</span>Harajatlar','<span class="room-category-icon">✂️</span>Tikish xizmati','<span class="room-category-icon">🔧</span>O‘rnatish xizmati'][j]+'</span><strong>'+fmt([g.mS,g.tS,g.uS][j])+'</strong></div>'+receiptRowsHtml(g.rows[t],curtains);}).join('')
    +'<div class="room-grand"><span>JAMI:</span><strong>'+fmt(g.grand)+'</strong></div></section>';
  }).join('');
 }
